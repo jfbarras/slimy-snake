@@ -3,6 +3,28 @@ var userInterface = window.userInterface = (function(window, document) {
     var original_keydown = document.onkeydown;
 
     return {
+        overlays: {},
+
+        initOverlays: function() {
+            var botOverlay = document.createElement('div');
+            botOverlay.style.position = 'fixed';
+            botOverlay.style.right = '5px';
+            botOverlay.style.bottom = '112px';
+            botOverlay.style.width = '150px';
+            botOverlay.style.height = '85px';
+            // botOverlay.style.background = 'rgba(0, 0, 0, 0.5)';
+            botOverlay.style.color = '#C0C0C0';
+            botOverlay.style.fontFamily = 'Consolas, Verdana';
+            botOverlay.style.zIndex = 999;
+            botOverlay.style.fontSize = '14px';
+            botOverlay.style.padding = '5px';
+            botOverlay.style.borderRadius = '5px';
+            botOverlay.className = 'nsi';
+            document.body.appendChild(botOverlay);
+
+            userInterface.overlays.botOverlay = botOverlay;
+        },
+
         // Track FPS
         framesPerSecond: {
             fps: 0,
