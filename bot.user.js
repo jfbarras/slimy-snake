@@ -8,7 +8,7 @@ The MIT License (MIT)
 // ==UserScript==
 // @name         Slither.io Snake Whisperer
 // @namespace    https://github.com/jfbarras/slimy-snake
-// @version      0.1.2
+// @version      0.1.3
 // @description  Slither.io Snake Whisperer
 // @author       J.-F. Barras
 // @match        http://slither.io/
@@ -24,6 +24,9 @@ The MIT License (MIT)
     // Listens for mouse wheel scroll.
     document.body.addEventListener('mousewheel', canvas.setZoom);
     document.body.addEventListener('DOMMouseScroll', canvas.setZoom);
+
+    // Tracks FPS.
+    setInterval(userInterface.framesPerSecond.fpsTimer, 80);
 
     // Start!
     userInterface.oefTimer();
