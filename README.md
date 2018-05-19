@@ -20,9 +20,13 @@ This is mostly me tinkering with this bot, but I'll be attemping to:
 - Give the player control over what happens.
 
 ## Features
+Zoom with mouse wheel. Reset with **Z**. Zoom does not creep back to default. It is maintained to desired level.
 
 tbd
 
 ## Controls
 
-tbd
+&nbsp; | &nbsp;
+---|---
+Mouse wheel | Zoom in/out
+Z | Reset zoom
