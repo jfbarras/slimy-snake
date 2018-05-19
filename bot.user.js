@@ -8,7 +8,7 @@ The MIT License (MIT)
 // ==UserScript==
 // @name         Slither.io Snake Whisperer
 // @namespace    https://github.com/jfbarras/slimy-snake
-// @version      0.0.2
+// @version      0.0.3
 // @description  Slither.io Snake Whisperer
 // @author       J.-F. Barras
 // @match        http://slither.io/
@@ -29,6 +29,13 @@ var canvas = window.canvas = (function(window) {
         resetZoom: function() {
             window.gsc = 0.9;
             window.desired_gsc = 0.9;
+        },
+
+        // Sets zoom to desired zoom.
+        maintainZoom: function() {
+            if (window.desired_gsc !== undefined) {
+                window.gsc = window.desired_gsc;
+            }
         }
     };
 })(window);
@@ -47,7 +54,21 @@ var userInterface = window.userInterface = (function(window, document) {
                     canvas.resetZoom();
                 }
             }
+        },
+
+        oefTimer: function() {
+            var start = Date.now();
+            canvas.maintainZoom();
+
+            if (!window.no_raf) {
+                window.raf(userInterface.oefTimer);
+            } else {
+                const bot_opt_targetFps = 60;
+                setTimeout(userInterface.oefTimer,
+                    (1000 / bot_opt_targetFps) - (Date.now() - start));
+            }
         }
+
     };
 })(window, document);
 
@@ -59,4 +80,6 @@ var userInterface = window.userInterface = (function(window, document) {
     document.body.addEventListener('mousewheel', canvas.setZoom);
     document.body.addEventListener('DOMMouseScroll', canvas.setZoom);
 
+    // Start!
+    userInterface.oefTimer();
 })(window, document);
