@@ -26,9 +26,25 @@ var userInterface = window.userInterface = (function(window, document) {
             }
         },
 
+        onFrameUpdate: function() {
+            if (window.playing && window.snake !== null) {
+                let oContent = [];
+
+                // Displays the frame rate.
+                oContent.push('fps: ' + userInterface.framesPerSecond.fps);
+
+                // Displays the X and Y of the snake.
+                oContent.push(
+                    ' x: ' + (Math.round(window.snake.xx + window.snake.fx) || 0) +
+                    ' y: ' + (Math.round(window.snake.yy + window.snake.fy) || 0));
+            }
+        },
+        
         oefTimer: function() {
             var start = Date.now();
             canvas.maintainZoom();
+
+            userInterface.onFrameUpdate();
 
             if (!window.no_raf) {
                 window.raf(userInterface.oefTimer);
