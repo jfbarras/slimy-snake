@@ -6,13 +6,13 @@ var userInterface = window.userInterface = (function(window, document) {
         overlays: {},
 
         initOverlays: function() {
+            // Prepares a bottom-right element. Gets refreshed every frame.
             var botOverlay = document.createElement('div');
             botOverlay.style.position = 'fixed';
             botOverlay.style.right = '5px';
             botOverlay.style.bottom = '112px';
             botOverlay.style.width = '150px';
             botOverlay.style.height = '85px';
-            // botOverlay.style.background = 'rgba(0, 0, 0, 0.5)';
             botOverlay.style.color = '#C0C0C0';
             botOverlay.style.fontFamily = 'Consolas, Verdana';
             botOverlay.style.zIndex = 999;
@@ -22,7 +22,24 @@ var userInterface = window.userInterface = (function(window, document) {
             botOverlay.className = 'nsi';
             document.body.appendChild(botOverlay);
 
+            // Prepares a top-left element. Gets refreshed on key-press.
+            var prefOverlay = document.createElement('div');
+            prefOverlay.style.position = 'fixed';
+            prefOverlay.style.left = '10px';
+            prefOverlay.style.top = '75px';
+            prefOverlay.style.width = '260px';
+            prefOverlay.style.height = '210px';
+            prefOverlay.style.color = '#C0C0C0';
+            prefOverlay.style.fontFamily = 'Consolas, Verdana';
+            prefOverlay.style.zIndex = 999;
+            prefOverlay.style.fontSize = '14px';
+            prefOverlay.style.padding = '5px';
+            prefOverlay.style.borderRadius = '5px';
+            prefOverlay.className = 'nsi';
+            document.body.appendChild(prefOverlay);
+
             userInterface.overlays.botOverlay = botOverlay;
+            userInterface.overlays.prefOverlay = prefOverlay;
         },
 
         // Stores FPS data.
@@ -45,7 +62,19 @@ var userInterface = window.userInterface = (function(window, document) {
                 if (e.keyCode === 90) {
                     canvas.resetZoom();
                 }
+                userInterface.onPrefChange();
             }
+        },
+
+        onPrefChange: function() {
+            var oContent = [];
+            var ht = userInterface.handleTextColor;
+
+            // Displays options.
+            oContent.push('version: ' + GM_info.script.version);
+            oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
+
+            userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
         },
 
         onFrameUpdate: function() {
@@ -77,7 +106,11 @@ var userInterface = window.userInterface = (function(window, document) {
                 setTimeout(userInterface.oefTimer,
                     (1000 / bot_opt_targetFps) - (Date.now() - start));
             }
-        }
+        },
 
+        handleTextColor: function(enabled) {
+            return '<span style=\"color:' +
+                (enabled ? 'green;\">enabled' : 'red;\">disabled') + '</span>';
+        }
     };
 })(window, document);
