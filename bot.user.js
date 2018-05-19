@@ -8,69 +8,14 @@ The MIT License (MIT)
 // ==UserScript==
 // @name         Slither.io Snake Whisperer
 // @namespace    https://github.com/jfbarras/slimy-snake
-// @version      0.0.3
+// @version      0.1.2
 // @description  Slither.io Snake Whisperer
 // @author       J.-F. Barras
 // @match        http://slither.io/
+// @require      src/canvas.js
+// @require      src/user-interface.js
 // @grant        none
 // ==/UserScript==
-
-var canvas = window.canvas = (function(window) {
-    return {
-        // Adjusts zoom in response to mouse wheel.
-        setZoom: function(e) {
-            if (window.gsc) {
-                window.gsc *= Math.pow(0.9, e.wheelDelta / -120 || e.detail / 2 || 0);
-                window.desired_gsc = window.gsc;
-            }
-        },
-
-        // Restores zoom to the default value.
-        resetZoom: function() {
-            window.gsc = 0.9;
-            window.desired_gsc = 0.9;
-        },
-
-        // Sets zoom to desired zoom.
-        maintainZoom: function() {
-            if (window.desired_gsc !== undefined) {
-                window.gsc = window.desired_gsc;
-            }
-        }
-    };
-})(window);
-
-var userInterface = window.userInterface = (function(window, document) {
-    // Saves original slither.io functions so they can be modified, or reenabled.
-    var original_keydown = document.onkeydown;
-
-    return {
-        onkeydown: function(e) {
-            // Triggers original slither.io onkeydown function.
-            original_keydown(e);
-            if (window.playing) {
-                // Allows letter 'Z' to reset zoom.
-                if (e.keyCode === 90) {
-                    canvas.resetZoom();
-                }
-            }
-        },
-
-        oefTimer: function() {
-            var start = Date.now();
-            canvas.maintainZoom();
-
-            if (!window.no_raf) {
-                window.raf(userInterface.oefTimer);
-            } else {
-                const bot_opt_targetFps = 60;
-                setTimeout(userInterface.oefTimer,
-                    (1000 / bot_opt_targetFps) - (Date.now() - start));
-            }
-        }
-
-    };
-})(window, document);
 
 // Main
 (function(window, document) {
