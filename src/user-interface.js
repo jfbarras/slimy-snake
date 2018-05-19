@@ -25,7 +25,7 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.overlays.botOverlay = botOverlay;
         },
 
-        // Track FPS
+        // Stores FPS data.
         framesPerSecond: {
             fps: 0,
             fpsTimer: function() {
@@ -59,6 +59,8 @@ var userInterface = window.userInterface = (function(window, document) {
                 oContent.push(
                     ' x: ' + (Math.round(window.snake.xx + window.snake.fx) || 0) +
                     ' y: ' + (Math.round(window.snake.yy + window.snake.fy) || 0));
+
+                userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
             }
         },
         
