@@ -3,7 +3,7 @@
 
 ## Table of Contents
 - [Intro](https://github.com/jfbarras/slimy-snake#intro)
-- [Features](https://github.com/jfbarras/slimy-snake#features)
+- [Features](https://github.com/jfbarras/slimy-snake#repieced-features)
 - [Controls](https://github.com/jfbarras/slimy-snake#controls)
 
 ## Intro
@@ -19,13 +19,15 @@ This is mostly me tinkering with this bot, but I'll be attemping to:
 - Turn features on/off, off/low/med/high.
 - Give the player control over what happens.
 
-## Features
-Zoom with mouse wheel. Reset with **Z**. Zoom does not creep back to default. It is maintained to desired level.
+## Repieced features
+Zoom with mouse wheel; reset with key press. Zoom does not creep back to default; it is maintained to desired level.
 
+Frame rate (FPS) is displayed in bottom right quadrant.
+
+## New features
 tbd
 
 ## Controls
-
 &nbsp; | &nbsp;
 ---|---
 Mouse wheel | Zoom in/out
