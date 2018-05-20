@@ -1,3 +1,11 @@
+
+// Sends arguments to console log.
+window.log = function() {
+    if (window.logDebugging) {
+        console.log.apply(console, arguments);
+    }
+};
+
 var canvas = window.canvas = (function(window) {
     return {
         // Adjusts zoom in response to mouse wheel.
