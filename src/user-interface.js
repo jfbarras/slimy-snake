@@ -45,6 +45,7 @@ var userInterface = window.userInterface = (function(window, document) {
         },
 
         toggleOverlays: function() {
+            userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
             Object.keys(userInterface.overlays).forEach(function(okey) {
                 var oVis = userInterface.hiddenOverlays ? 'hidden' : 'visible';
                 userInterface.overlays[okey].style.visibility = oVis;
@@ -116,7 +117,7 @@ var userInterface = window.userInterface = (function(window, document) {
             // Letter 'H' to toggle hidden mode
             if (e.keyCode === 72) {
                 window.log('H key pressed. hiddenOverlays: ' + userInterface.hiddenOverlays); 
-                userInterface.toggleOverlays(!userInterface.hiddenOverlays);
+                userInterface.toggleOverlays();
             }
             // Allows letter 'O' to change render mode.
             if (e.keyCode === 79) {
