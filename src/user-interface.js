@@ -116,8 +116,8 @@ var userInterface = window.userInterface = (function(window, document) {
             }
             // Letter 'H' to toggle hidden mode
             if (e.keyCode === 72) {
-                window.log('H key pressed. hiddenOverlays: ' + userInterface.hiddenOverlays); 
                 userInterface.toggleOverlays();
+                window.log('Hidden overlays set to: ' + userInterface.hiddenOverlays); 
             }
             // Allows letter 'O' to change render mode.
             if (e.keyCode === 79) {
