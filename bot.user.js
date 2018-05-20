@@ -8,7 +8,7 @@ The MIT License (MIT)
 // ==UserScript==
 // @name         Slither.io Snake Whisperer
 // @namespace    https://github.com/jfbarras/slimy-snake
-// @version      0.1.10
+// @version      0.6.2
 // @description  Slither.io Snake Whisperer
 // @author       J.-F. Barras
 // @match        http://slither.io/
@@ -20,11 +20,19 @@ The MIT License (MIT)
 // Main
 (function(window, document) {
     // Ties listeners.
+    window.play_btn.btnf.addEventListener('click', userInterface.playButtonClickListener);
     document.onkeydown = userInterface.onkeydown;
 
     // Prepares the overlays.
     userInterface.initOverlays();
-
+ 
+    // Loads preferences.
+    userInterface.loadPreference('logDebugging', false);
+    userInterface.loadPreference('visualDebugging', false);
+    userInterface.loadPreference('autoRespawn', false);
+    userInterface.loadPreference('mobileRender', false);
+    window.nick.value = userInterface.loadPreference('savedNick', 'Slither.io-bot');
+ 
     // Listens for mouse wheel scroll.
     document.body.addEventListener('mousewheel', canvas.setZoom);
     document.body.addEventListener('DOMMouseScroll', canvas.setZoom);

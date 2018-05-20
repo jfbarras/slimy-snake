@@ -43,6 +43,45 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.overlays.prefOverlay = prefOverlay;
         },
 
+        // Saves a variable to local storage.
+        savePreference: function(item, value) {
+            window.localStorage.setItem(item, value);
+            userInterface.onPrefChange();
+        },
+
+        // Loads a variable from local storage.
+        loadPreference: function(preference, defaultVar) {
+            var savedItem = window.localStorage.getItem(preference);
+            if (savedItem !== null) {
+                if (savedItem === 'true') {
+                    window[preference] = true;
+                } else if (savedItem === 'false') {
+                    window[preference] = false;
+                } else {
+                    window[preference] = savedItem;
+                }
+                window.log('Setting found for ' + preference + ': ' + window[preference]);
+            } else {
+                window[preference] = defaultVar;
+                window.log('No setting found for ' + preference +
+                    '. Used default: ' + window[preference]);
+            }
+            userInterface.onPrefChange();
+            return window[preference];
+        },
+
+        // Saves username when you click on "Play" button.
+        playButtonClickListener: function() {
+            userInterface.saveNick();
+            userInterface.loadPreference('autoRespawn', false);
+        },
+
+        // Preserves the player's nickname.
+        saveNick: function() {
+            var nick = document.getElementById('nick').value;
+            userInterface.savePreference('savedNick', nick);
+        },
+
         // Stores FPS data.
         framesPerSecond: {
             fps: 0,
@@ -63,6 +102,7 @@ var userInterface = window.userInterface = (function(window, document) {
             if (e.keyCode === 85) {
                 window.logDebugging = !window.logDebugging;
                 console.log('Debugging to console set to: ' + window.logDebugging);
+                userInterface.savePreference('logDebugging', window.logDebugging);
             }
             // Allows letter 'O' to change render mode.
             if (e.keyCode === 79) {
@@ -91,6 +131,7 @@ var userInterface = window.userInterface = (function(window, document) {
         toggleMobileRendering: function(mobileRendering) {
             window.mobileRender = mobileRendering;
             window.log('Mobile rendering set to: ' + window.mobileRender);
+            userInterface.savePreference('mobileRender', window.mobileRender);
             if (window.mobileRender) {
                 window.render_mode = 1;
                 window.want_quality = 0;
