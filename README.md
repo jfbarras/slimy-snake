@@ -22,15 +22,17 @@ This is mostly me tinkering with this bot, but I'll be attemping to:
 ## Repieced features
 Zoom with mouse wheel; reset with **Z**. Zoom does not creep back to default; it is maintained to desired level.
 
-Frame rate (FPS) and position are displayed in the bottom right quadrant.
+Frame rate (FPS) and position are displayed in an overlay, in the bottom right quadrant.
 
 Mobile rendering, **good when experiencing lag**, can be toggled with **O**.
 
-Options, like mobile rendering, are displayed in the top left quadrant.
+Preferences, like mobile rendering, are displayed in an overlay, in the top left quadrant.
 
 Messages can be written to the development console **(F12)**. Logging can be toggled with **U**.
 
 Preferences, like logging, can be persisted across reboots.
+
+Overlays, like preferences or FPS, can be toggled with **H**.
 
 ## New features
 tbd
@@ -38,10 +40,11 @@ tbd
 ## Controls
 Key | Result
 :---|:---
-Space | Speed boost
 U	| Log debugging
 O | Mobile rendering
+H | Hide overlays
 Z | Reset zoom
+Space | Speed boost
 
 Mouse | Result
 :---|:---
