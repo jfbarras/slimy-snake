@@ -57,17 +57,16 @@ var userInterface = window.userInterface = (function(window, document) {
         onkeydown: function(e) {
             // Triggers original slither.io onkeydown function.
             original_keydown(e);
-            if (window.playing) {
-                // Allows letter 'O' to change render mode.
-                if (e.keyCode === 79) {
-                    userInterface.toggleMobileRendering(!window.mobileRender);
-                }
-                // Allows letter 'Z' to reset zoom.
-                if (e.keyCode === 90) {
-                    canvas.resetZoom();
-                }
-                userInterface.onPrefChange();
+            if (!window.playing) return;
+            // Allows letter 'O' to change render mode.
+            if (e.keyCode === 79) {
+                userInterface.toggleMobileRendering(!window.mobileRender);
             }
+            // Allows letter 'Z' to reset zoom.
+            if (e.keyCode === 90) {
+                canvas.resetZoom();
+            }
+            userInterface.onPrefChange();
         },
 
         onPrefChange: function() {
@@ -96,19 +95,18 @@ var userInterface = window.userInterface = (function(window, document) {
         },
 
         onFrameUpdate: function() {
-            if (window.playing && window.snake !== null) {
-                let oContent = [];
+            if (!window.playing || window.snake == null) return;
+            let oContent = [];
 
-                // Displays the frame rate.
-                oContent.push('fps: ' + userInterface.framesPerSecond.fps);
+            // Displays the frame rate.
+            oContent.push('fps: ' + userInterface.framesPerSecond.fps);
 
-                // Displays the X and Y of the snake.
-                oContent.push(
-                    ' x: ' + (Math.round(window.snake.xx + window.snake.fx) || 0) +
-                    ' y: ' + (Math.round(window.snake.yy + window.snake.fy) || 0));
+            // Displays the X and Y of the snake.
+            oContent.push(
+                ' x: ' + (Math.round(window.snake.xx + window.snake.fx) || 0) +
+                ' y: ' + (Math.round(window.snake.yy + window.snake.fy) || 0));
 
-                userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
-            }
+            userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
         },
         
         oefTimer: function() {
