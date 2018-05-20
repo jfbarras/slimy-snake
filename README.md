@@ -20,9 +20,13 @@ This is mostly me tinkering with this bot, but I'll be attemping to:
 - Give the player control over what happens.
 
 ## Repieced features
-Zoom with mouse wheel; reset with key press. Zoom does not creep back to default; it is maintained to desired level.
+Zoom with mouse wheel; reset with **Z**. Zoom does not creep back to default; it is maintained to desired level.
 
-Frame rate (FPS) is displayed in bottom right quadrant.
+Frame rate (FPS) and position are displayed in the bottom right quadrant.
+
+Mobile rendering, **good when experiencing lag**, can be toggled with **O**.
+
+Options, like mobile rendering, are displayed in the top left quadrant.
 
 ## New features
 tbd
@@ -30,5 +34,6 @@ tbd
 ## Controls
 &nbsp; | &nbsp;
 ---|---
+O | Mobile rendering
 Mouse wheel | Zoom in/out
 Z | Reset zoom
