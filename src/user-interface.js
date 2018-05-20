@@ -57,7 +57,7 @@ var userInterface = window.userInterface = (function(window, document) {
         onkeydown: function(e) {
             // Triggers original slither.io onkeydown function.
             original_keydown(e);
-            if (window.playing) {
+            if (!window.playing) return;
                 // Allows letter 'O' to change render mode.
                 if (e.keyCode === 79) {
                     userInterface.toggleMobileRendering(!window.mobileRender);
@@ -67,7 +67,6 @@ var userInterface = window.userInterface = (function(window, document) {
                     canvas.resetZoom();
                 }
                 userInterface.onPrefChange();
-            }
         },
 
         onPrefChange: function() {
@@ -96,7 +95,7 @@ var userInterface = window.userInterface = (function(window, document) {
         },
 
         onFrameUpdate: function() {
-            if (window.playing && window.snake !== null) {
+            if (!window.playing || window.snake == null) return;
                 let oContent = [];
 
                 // Displays the frame rate.
@@ -108,7 +107,6 @@ var userInterface = window.userInterface = (function(window, document) {
                     ' y: ' + (Math.round(window.snake.yy + window.snake.fy) || 0));
 
                 userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
-            }
         },
         
         oefTimer: function() {
