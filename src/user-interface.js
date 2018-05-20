@@ -43,6 +43,18 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.overlays.prefOverlay = prefOverlay;
         },
 
+        // Saves a variable to local storage.
+        savePreference: function(item, value) {
+            window.localStorage.setItem(item, value);
+            userInterface.onPrefChange();
+        },
+
+        // Preserves the player's nickname.
+        saveNick: function() {
+            var nick = document.getElementById('nick').value;
+            userInterface.savePreference('savedNick', nick);
+        },
+
         // Stores FPS data.
         framesPerSecond: {
             fps: 0,
@@ -63,6 +75,7 @@ var userInterface = window.userInterface = (function(window, document) {
             if (e.keyCode === 85) {
                 window.logDebugging = !window.logDebugging;
                 console.log('Debugging to console set to: ' + window.logDebugging);
+                userInterface.savePreference('logDebugging', window.logDebugging);
             }
             // Allows letter 'O' to change render mode.
             if (e.keyCode === 79) {
@@ -91,6 +104,7 @@ var userInterface = window.userInterface = (function(window, document) {
         toggleMobileRendering: function(mobileRendering) {
             window.mobileRender = mobileRendering;
             window.log('Mobile rendering set to: ' + window.mobileRender);
+            userInterface.savePreference('mobileRender', window.mobileRender);
             if (window.mobileRender) {
                 window.render_mode = 1;
                 window.want_quality = 0;
