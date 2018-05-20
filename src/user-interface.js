@@ -5,6 +5,7 @@ var userInterface = window.userInterface = (function(window, document) {
 
     return {
         overlays: {},
+        hiddenOverlays: false,
 
         initOverlays: function() {
             // Prepares a bottom-right element. Gets refreshed every frame.
@@ -41,6 +42,13 @@ var userInterface = window.userInterface = (function(window, document) {
 
             userInterface.overlays.botOverlay = botOverlay;
             userInterface.overlays.prefOverlay = prefOverlay;
+        },
+
+        toggleOverlays: function() {
+            Object.keys(userInterface.overlays).forEach(function(okey) {
+                var oVis = userInterface.hiddenOverlays ? 'hidden' : 'visible';
+                userInterface.overlays[okey].style.visibility = oVis;
+            });
         },
 
         // Saves a variable to local storage.
@@ -103,6 +111,10 @@ var userInterface = window.userInterface = (function(window, document) {
                 window.logDebugging = !window.logDebugging;
                 console.log('Debugging to console set to: ' + window.logDebugging);
                 userInterface.savePreference('logDebugging', window.logDebugging);
+            }
+            // Letter 'H' to toggle hidden mode
+            if (e.keyCode === 72) {
+                userInterface.toggleOverlays(!userInterface.hiddenOverlays);
             }
             // Allows letter 'O' to change render mode.
             if (e.keyCode === 79) {
