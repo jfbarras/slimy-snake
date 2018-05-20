@@ -32,8 +32,14 @@ Options, like mobile rendering, are displayed in the top left quadrant.
 tbd
 
 ## Controls
-&nbsp; | &nbsp;
----|---
+Key | Result
+:---|:---
+Space | Speed boost
+U	| Log debugging
 O | Mobile rendering
-Mouse wheel | Zoom in/out
 Z | Reset zoom
+
+Mouse | Result
+:---|:---
+Click | Speed boost
+Wheel | Zoom in/out
