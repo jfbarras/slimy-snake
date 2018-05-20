@@ -28,6 +28,10 @@ Mobile rendering, **good when experiencing lag**, can be toggled with **O**.
 
 Options, like mobile rendering, are displayed in the top left quadrant.
 
+Messages can be written to the development console **(F12)**. Logging can be toggled with **U**.
+
+Preferences, like logging, can be persisted across reboots.
+
 ## New features
 tbd
 
