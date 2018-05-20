@@ -1,3 +1,4 @@
+
 var userInterface = window.userInterface = (function(window, document) {
     // Saves original slither.io functions so they can be modified, or reenabled.
     var original_keydown = document.onkeydown;
@@ -58,6 +59,11 @@ var userInterface = window.userInterface = (function(window, document) {
             // Triggers original slither.io onkeydown function.
             original_keydown(e);
             if (!window.playing) return;
+            // Allows letter 'U' to toggle debugging to console.
+            if (e.keyCode === 85) {
+                window.logDebugging = !window.logDebugging;
+                console.log('Debugging to console set to: ' + window.logDebugging);
+            }
             // Allows letter 'O' to change render mode.
             if (e.keyCode === 79) {
                 userInterface.toggleMobileRendering(!window.mobileRender);
@@ -76,6 +82,7 @@ var userInterface = window.userInterface = (function(window, document) {
             // Displays options.
             oContent.push('version: ' + GM_info.script.version);
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
+            oContent.push('[U] log debugging: ' + ht(window.logDebugging));
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
         },
@@ -83,6 +90,7 @@ var userInterface = window.userInterface = (function(window, document) {
         // Manual mobile rendering
         toggleMobileRendering: function(mobileRendering) {
             window.mobileRender = mobileRendering;
+            window.log('Mobile rendering set to: ' + window.mobileRender);
             if (window.mobileRender) {
                 window.render_mode = 1;
                 window.want_quality = 0;
