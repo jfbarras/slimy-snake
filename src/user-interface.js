@@ -58,6 +58,10 @@ var userInterface = window.userInterface = (function(window, document) {
             // Triggers original slither.io onkeydown function.
             original_keydown(e);
             if (window.playing) {
+                // Allows letter 'O' to change render mode.
+                if (e.keyCode === 79) {
+                    userInterface.toggleMobileRendering(!window.mobileRender);
+                }
                 // Allows letter 'Z' to reset zoom.
                 if (e.keyCode === 90) {
                     canvas.resetZoom();
@@ -75,6 +79,20 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
+        },
+        
+        // Manual mobile rendering
+        toggleMobileRendering: function(mobileRendering) {
+            window.mobileRender = mobileRendering;
+            if (window.mobileRender) {
+                window.render_mode = 1;
+                window.want_quality = 0;
+                window.high_quality = false;
+            } else {
+                window.render_mode = 2;
+                window.want_quality = 1;
+                window.high_quality = true;
+            }
         },
 
         onFrameUpdate: function() {
