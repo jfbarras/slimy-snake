@@ -8,7 +8,7 @@ The MIT License (MIT)
 // ==UserScript==
 // @name         Slither.io Snake Whisperer
 // @namespace    https://github.com/jfbarras/slimy-snake
-// @version      0.6.3
+// @version      0.6.4
 // @description  Slither.io Snake Whisperer
 // @author       J.-F. Barras
 // @match        http://slither.io/
