@@ -218,6 +218,22 @@ var userInterface = window.userInterface = (function(window, document) {
             var start = Date.now();
             canvas.maintainZoom();
 
+            if (window.playing && window.snake !== null) {
+                bot.state = 'running';
+            } else if (bot.state === 'running') {
+                bot.state = 'dying';
+
+                if (window.lastscore && window.lastscore.childNodes[1]) {
+                    bot.scores.push(parseInt(window.lastscore.childNodes[1].innerHTML));
+                    bot.scores.sort(function(a, b) {
+                        return b - a;
+                    });
+                    userInterface.updateStats();
+                }
+
+                bot.state = 'dead';
+            }
+
             userInterface.onFrameUpdate();
 
             if (!window.no_raf) {
