@@ -119,9 +119,9 @@ var userInterface = window.userInterface = (function(window, document) {
                 userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
                 userInterface.spreadOverlayVis();
             }
-            // Allows letter 'O' to change render mode.
+            // Allows letter 'O' to toggle render mode.
             if (e.keyCode === 79) {
-                userInterface.toggleMobileRendering(!window.mobileRender);
+                userInterface.setMobileRendering(!window.mobileRender);
             }
             // Allows letter 'Z' to reset zoom.
             if (e.keyCode === 90) {
@@ -141,10 +141,10 @@ var userInterface = window.userInterface = (function(window, document) {
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
         },
-        
-        // Manual mobile rendering
-        toggleMobileRendering: function(mobileRendering) {
-            window.mobileRender = mobileRendering;
+
+        // Sets window flags pertaining to render mode and quality.
+        setMobileRendering: function(isMobile) {
+            window.mobileRender = isMobile;
             window.log('Mobile rendering set to: ' + window.mobileRender);
             userInterface.savePreference('mobileRender', window.mobileRender);
             if (window.mobileRender) {
@@ -172,7 +172,7 @@ var userInterface = window.userInterface = (function(window, document) {
 
             userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
         },
-        
+
         oefTimer: function() {
             var start = Date.now();
             canvas.maintainZoom();
