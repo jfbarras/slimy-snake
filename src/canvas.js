@@ -33,6 +33,7 @@ var canvas = window.canvas = (function(window) {
 
 var bot = window.bot = (function(window) {
     return {
+        state: 'init',
         scores: []
     };
 })(window);
