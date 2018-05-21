@@ -25,14 +25,14 @@ The MIT License (MIT)
 
     // Prepares the overlays.
     userInterface.initOverlays();
- 
+
     // Loads preferences.
     userInterface.loadPreference('logDebugging', false);
     userInterface.loadPreference('visualDebugging', false);
     userInterface.loadPreference('autoRespawn', false);
     userInterface.loadPreference('mobileRender', false);
     window.nick.value = userInterface.loadPreference('savedNick', 'Slither.io-bot');
- 
+
     // Listens for mouse wheel scroll.
     document.body.addEventListener('mousewheel', canvas.setZoom);
     document.body.addEventListener('DOMMouseScroll', canvas.setZoom);
