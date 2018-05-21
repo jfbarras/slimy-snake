@@ -40,8 +40,25 @@ var userInterface = window.userInterface = (function(window, document) {
             prefOverlay.className = 'nsi';
             document.body.appendChild(prefOverlay);
 
+            // Prepares a mid-left element. Holds past scores.
+            var statsOverlay = document.createElement('div');
+            statsOverlay.style.position = 'fixed';
+            statsOverlay.style.left = '10px';
+            statsOverlay.style.top = '295px';
+            statsOverlay.style.width = '140px';
+            statsOverlay.style.height = '210px';
+            statsOverlay.style.color = '#C0C0C0';
+            statsOverlay.style.fontFamily = 'Consolas, Verdana';
+            statsOverlay.style.zIndex = 998;
+            statsOverlay.style.fontSize = '14px';
+            statsOverlay.style.padding = '5px';
+            statsOverlay.style.borderRadius = '5px';
+            statsOverlay.className = 'nsi';
+            document.body.appendChild(statsOverlay);
+
             userInterface.overlays.botOverlay = botOverlay;
             userInterface.overlays.prefOverlay = prefOverlay;
+            userInterface.overlays.statsOverlay = statsOverlay;
         },
 
         // Spread 'overlay visibility property' to all overlays.
@@ -130,6 +147,30 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.onPrefChange();
         },
 
+        // Updates the stats overlay.
+        updateStats: function() {
+            var oContent = [];
+            var median;
+
+            if (bot.scores.length === 0) return;
+
+            median = Math.round((bot.scores[Math.floor((bot.scores.length - 1) / 2)] +
+                bot.scores[Math.ceil((bot.scores.length - 1) / 2)]) / 2);
+
+            oContent.push('games played: ' + bot.scores.length);
+            oContent.push('avg: ' + Math.round(
+                    bot.scores.reduce(function(a, b) {
+                        return a + b;
+                    }) / (bot.scores.length)) +
+                ' med: ' + median);
+
+            for (var i = 0; i < bot.scores.length && i < 10; i++) {
+                oContent.push(i + 1 + '. ' + bot.scores[i]);
+            }
+
+            userInterface.overlays.statsOverlay.innerHTML = oContent.join('<br/>');
+        },        
+
         onPrefChange: function() {
             var oContent = [];
             var ht = userInterface.handleTextColor;
@@ -176,6 +217,22 @@ var userInterface = window.userInterface = (function(window, document) {
         oefTimer: function() {
             var start = Date.now();
             canvas.maintainZoom();
+
+            if (window.playing && window.snake !== null) {
+                bot.state = 'running';
+            } else if (bot.state === 'running') {
+                bot.state = 'dying';
+
+                if (window.lastscore && window.lastscore.childNodes[1]) {
+                    bot.scores.push(parseInt(window.lastscore.childNodes[1].innerHTML));
+                    bot.scores.sort(function(a, b) {
+                        return b - a;
+                    });
+                    userInterface.updateStats();
+                }
+
+                bot.state = 'dead';
+            }
 
             userInterface.onFrameUpdate();
 
