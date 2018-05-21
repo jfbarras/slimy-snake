@@ -8,7 +8,7 @@ The MIT License (MIT)
 // ==UserScript==
 // @name         Slither.io Snake Whisperer
 // @namespace    https://github.com/jfbarras/slimy-snake
-// @version      0.6.4
+// @version      0.6.5
 // @description  Slither.io Snake Whisperer
 // @author       J.-F. Barras
 // @match        http://slither.io/
@@ -38,7 +38,7 @@ The MIT License (MIT)
     document.body.addEventListener('DOMMouseScroll', canvas.setZoom);
 
     // Sets the render mode.
-    userInterface.toggleMobileRendering(window.mobileRender);
+    userInterface.setMobileRendering(window.mobileRender);
 
     // Unblocks all skins without the need for FB sharing.
     window.localStorage.setItem('edttsg', '1');
