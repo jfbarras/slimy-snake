@@ -44,8 +44,8 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.overlays.prefOverlay = prefOverlay;
         },
 
-        toggleOverlays: function() {
-            userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
+        // Spread 'overlay visibility property' to all overlays.
+        spreadOverlayVis: function() {
             Object.keys(userInterface.overlays).forEach(function(okey) {
                 var oVis = userInterface.hiddenOverlays ? 'hidden' : 'visible';
                 userInterface.overlays[okey].style.visibility = oVis;
@@ -103,7 +103,7 @@ var userInterface = window.userInterface = (function(window, document) {
                 }
             }
         },
-        
+
         onkeydown: function(e) {
             // Triggers original slither.io onkeydown function.
             original_keydown(e);
@@ -114,14 +114,14 @@ var userInterface = window.userInterface = (function(window, document) {
                 console.log('Debugging to console set to: ' + window.logDebugging);
                 userInterface.savePreference('logDebugging', window.logDebugging);
             }
-            // Letter 'H' to toggle hidden mode
+            // Allows letter 'H' to toggle overlay visibility.
             if (e.keyCode === 72) {
-                userInterface.toggleOverlays();
-                window.log('Hidden overlays set to: ' + userInterface.hiddenOverlays); 
+                userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
+                userInterface.spreadOverlayVis();
             }
-            // Allows letter 'O' to change render mode.
+            // Allows letter 'O' to toggle render mode.
             if (e.keyCode === 79) {
-                userInterface.toggleMobileRendering(!window.mobileRender);
+                userInterface.setMobileRendering(!window.mobileRender);
             }
             // Allows letter 'Z' to reset zoom.
             if (e.keyCode === 90) {
@@ -141,10 +141,10 @@ var userInterface = window.userInterface = (function(window, document) {
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
         },
-        
-        // Manual mobile rendering
-        toggleMobileRendering: function(mobileRendering) {
-            window.mobileRender = mobileRendering;
+
+        // Sets window flags pertaining to render mode and quality.
+        setMobileRendering: function(isMobile) {
+            window.mobileRender = isMobile;
             window.log('Mobile rendering set to: ' + window.mobileRender);
             userInterface.savePreference('mobileRender', window.mobileRender);
             if (window.mobileRender) {
@@ -172,7 +172,7 @@ var userInterface = window.userInterface = (function(window, document) {
 
             userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
         },
-        
+
         oefTimer: function() {
             var start = Date.now();
             canvas.maintainZoom();
