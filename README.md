@@ -34,6 +34,8 @@ Preferences, like logging, can be persisted across reboots.
 
 Overlays, like preferences or FPS, can be toggled with **H**.
 
+Statistics, like top ten scores this session, are displayed in a mid-left overlay.
+
 ## New features
 tbd
 
