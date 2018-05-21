@@ -30,3 +30,9 @@ var canvas = window.canvas = (function(window) {
         }
     };
 })(window);
+
+var bot = window.bot = (function(window) {
+    return {
+        scores: []
+    };
+})(window);
