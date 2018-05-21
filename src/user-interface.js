@@ -44,8 +44,8 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.overlays.prefOverlay = prefOverlay;
         },
 
-        toggleOverlays: function() {
-            userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
+        // Spread 'overlay visibility property' to all overlays.
+        spreadOverlayVis: function() {
             Object.keys(userInterface.overlays).forEach(function(okey) {
                 var oVis = userInterface.hiddenOverlays ? 'hidden' : 'visible';
                 userInterface.overlays[okey].style.visibility = oVis;
@@ -103,7 +103,7 @@ var userInterface = window.userInterface = (function(window, document) {
                 }
             }
         },
-        
+
         onkeydown: function(e) {
             // Triggers original slither.io onkeydown function.
             original_keydown(e);
@@ -114,10 +114,10 @@ var userInterface = window.userInterface = (function(window, document) {
                 console.log('Debugging to console set to: ' + window.logDebugging);
                 userInterface.savePreference('logDebugging', window.logDebugging);
             }
-            // Letter 'H' to toggle hidden mode
+            // Allows letter 'H' to toggle overlay visibility.
             if (e.keyCode === 72) {
-                userInterface.toggleOverlays();
-                window.log('Hidden overlays set to: ' + userInterface.hiddenOverlays); 
+                userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
+                userInterface.spreadOverlayVis();
             }
             // Allows letter 'O' to change render mode.
             if (e.keyCode === 79) {
