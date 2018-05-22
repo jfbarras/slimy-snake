@@ -8,6 +8,40 @@ window.log = function() {
 
 var canvas = window.canvas = (function(window) {
     return {
+        // Map cordinates to Canvas cordinate shortcut
+        mapToCanvas: function(point) {
+            var c = {
+                x: window.mww2 + (point.x - window.view_xx) * window.gsc,
+                y: window.mhh2 + (point.y - window.view_yy) * window.gsc
+            };
+            return c;
+        },
+
+        // Map to Canvas coordinate conversion for drawing circles.
+        // Radius also needs to scale by .gsc
+        circleMapToCanvas: function(circle) {
+            var newCircle = canvas.mapToCanvas({
+                x: circle.x,
+                y: circle.y
+            });
+            return canvas.circle(
+                newCircle.x,
+                newCircle.y,
+                circle.radius * window.gsc
+            );
+        },
+
+        // Constructor for circle type
+        circle: function(x, y, r) {
+            var c = {
+                x: Math.round(x),
+                y: Math.round(y),
+                radius: Math.round(r)
+            };
+
+            return c;
+        },
+
         // Adjusts zoom in response to mouse wheel.
         setZoom: function(e) {
             if (window.gsc) {
@@ -27,6 +61,27 @@ var canvas = window.canvas = (function(window) {
             if (window.desired_gsc !== undefined) {
                 window.gsc = window.desired_gsc;
             }
+        },
+
+        // Draws a circle on the canvas.
+        drawCircle: function(circle, color, fill, alpha) {
+            if (alpha === undefined) alpha = 1;
+            if (circle.radius === undefined) circle.radius = 5;
+
+            var context = window.mc.getContext('2d');
+            var newCircle = canvas.circleMapToCanvas(circle);
+
+            context.save();
+            context.globalAlpha = alpha;
+            context.beginPath();
+            context.strokeStyle = color;
+            context.arc(newCircle.x, newCircle.y, newCircle.radius, 0, Math.PI * 2);
+            context.stroke();
+            if (fill) {
+                context.fillStyle = color;
+                context.fill();
+            }
+            context.restore();
         },
 
         // Draws a sector (angle + arc), a pie slice.
