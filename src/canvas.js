@@ -27,6 +27,31 @@ var canvas = window.canvas = (function(window) {
             if (window.desired_gsc !== undefined) {
                 window.gsc = window.desired_gsc;
             }
+        },
+
+        // Draws a sector (angle + arc), a pie slice.
+        // @param {number} start -- where to start the angle
+        // @param {number} angle -- width of the angle
+        drawAngle: function(start, angle, arcradius, color, fill, alpha) {
+            if (alpha === undefined) alpha = 0.6;
+
+            var context = window.mc.getContext('2d');
+
+            context.save();
+            context.globalAlpha = alpha;
+            context.beginPath();
+            context.strokeStyle = color;
+            context.moveTo(window.mc.width / 2, window.mc.height / 2);
+            context.arc(window.mc.width / 2, window.mc.height / 2, arcradius * window.gsc, start, angle);
+            context.lineTo(window.mc.width / 2, window.mc.height / 2);
+            context.closePath();
+            context.stroke();
+            if (fill) {
+                context.fillStyle = color;
+                context.fill();
+            }
+            context.restore();
         }
+
     };
 })(window);
