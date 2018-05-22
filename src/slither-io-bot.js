@@ -25,8 +25,8 @@ var bot = window.bot = (function(window) {
             bot.snakeRadius = bot.snakeWidth / 2;
             bot.snakeLength = bot.getSnakeLength();
 
-            canvas.drawAngle(window.snake.ehang - Math.PI/8, window.snake.ehang + Math.PI/8,
-                3 * bot.snakeRadius, 'cyan', false);
+            canvas.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
+                2.9 * bot.snakeRadius, 'coral', false);
         }
     };
 })(window);
