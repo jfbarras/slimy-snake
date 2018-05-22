@@ -125,6 +125,12 @@ var userInterface = window.userInterface = (function(window, document) {
             // Triggers original slither.io onkeydown function.
             original_keydown(e);
             if (!window.playing) return;
+            // Allows letter 'Y' to toggle visual debugging.
+            if (e.keyCode === 89) {
+                window.visualDebugging++;
+                if (window.visualDebugging > 3) window.visualDebugging = 0;
+                userInterface.savePreference('visualDebugging', window.visualDebugging);
+            }
             // Allows letter 'U' to toggle debugging to console.
             if (e.keyCode === 85) {
                 window.logDebugging = !window.logDebugging;
@@ -173,12 +179,13 @@ var userInterface = window.userInterface = (function(window, document) {
 
         onPrefChange: function() {
             var oContent = [];
-            var ht = userInterface.handleTextColor;
+            var ht = userInterface.twoClassTC;
 
             // Displays options.
             oContent.push('version: ' + GM_info.script.version);
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
             oContent.push('[U] log debugging: ' + ht(window.logDebugging));
+            oContent.push('[Y] visual debugging: ' + userInterface.fourClassTC(window.visualDebugging));
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
         },
@@ -246,9 +253,13 @@ var userInterface = window.userInterface = (function(window, document) {
             }
         },
 
-        handleTextColor: function(enabled) {
-            return '<span style=\"color:' +
-                (enabled ? 'green;\">enabled' : 'red;\">disabled') + '</span>';
+        fourClassTC: function(level) {
+            const RDYLGN = ['#d7191c;\">off', '#fdae61;\">low', '#a6d96a;\">med', '#1a9641;\">high'];
+            return '<span style=\"color:' + RDYLGN[level] + '</span>';
+        },
+
+        twoClassTC: function(enabled) {
+            return '<span style=\"color:' + (enabled ? '#1a9641;\">enabled' : '#d7191c;\">disabled') + '</span>';
         }
     };
 })(window, document);
