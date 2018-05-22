@@ -3,7 +3,8 @@
 
 ## Table of Contents
 - [Intro](https://github.com/jfbarras/slimy-snake#intro)
-- [Features](https://github.com/jfbarras/slimy-snake#repieced-features)
+- [Repieced features](https://github.com/jfbarras/slimy-snake#repieced-features)
+- [New features](https://github.com/jfbarras/slimy-snake#new-features)
 - [Controls](https://github.com/jfbarras/slimy-snake#controls)
 
 ## Intro
@@ -19,7 +20,7 @@ This is mostly me tinkering with this bot, but I'll be attemping to:
 - Turn features on/off, off/low/med/high.
 - Give the player control over what happens.
 
-## Repieced features
+## Repieced Features
 Zoom with mouse wheel; reset with **Z**. Zoom does not creep back to default; it is maintained to desired level.
 
 Frame rate (FPS) and position are displayed in an overlay, in the bottom right quadrant.
@@ -34,14 +35,19 @@ Preferences, like logging, can be persisted across reboots.
 
 Overlays, like preferences or FPS, can be toggled with **H**.
 
-Statistics, like top ten scores this session, are displayed in a mid-left overlay.
+Statistics, like the top ten scores this session, are displayed in a mid-left overlay.
 
-## New features
-tbd
+Visual debugging, like food collection sector and snake turn radius, can be toggled with **Y**.
+
+## New Features
+Statistics and visual debugging are available even if the player fully controls the snake.
+
+Four levels of visual debugging are planned: off, low, med, high.
 
 ## Controls
 Key | Result
 :---|:---
+Y	| Visual debugging
 U	| Log debugging
 O | Mobile rendering
 H | Hide overlays
