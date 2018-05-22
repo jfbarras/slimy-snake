@@ -169,7 +169,7 @@ var userInterface = window.userInterface = (function(window, document) {
             }
 
             userInterface.overlays.statsOverlay.innerHTML = oContent.join('<br/>');
-        },        
+        },
 
         onPrefChange: function() {
             var oContent = [];
@@ -220,6 +220,7 @@ var userInterface = window.userInterface = (function(window, document) {
 
             if (window.playing && window.snake !== null) {
                 bot.state = 'running';
+                bot.every();
             } else if (bot.state === 'running') {
                 bot.state = 'dying';
 
