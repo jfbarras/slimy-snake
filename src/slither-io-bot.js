@@ -25,8 +25,11 @@ var bot = window.bot = (function(window) {
             bot.snakeRadius = bot.snakeWidth / 2;
             bot.snakeLength = bot.getSnakeLength();
 
-            canvas.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
-                2.9 * bot.snakeRadius, 'coral', false);
+            if (window.visualDebugging > 0) {
+                // coral food collection sector
+                canvas.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
+                    3 * bot.snakeRadius, 'coral', false);
+            }
         }
     };
 })(window);
