@@ -17,38 +17,24 @@ var bot = window.bot = (function(window) {
 
         drawSideCircles: function() {
           var sidecircle;
-    			var lnp = window.snake.lnp;
+          var s = bot.sin * bot.snakeWidth;
+          var c = bot.cos * bot.snakeWidth;
+          var r = bot.snakeRadius * bot.speedMult;
 
           //inner-right
-          sidecircle = canvas.circle(
-              lnp.xx - ((lnp.yy + bot.sin * bot.snakeWidth) - lnp.yy),
-              lnp.yy + ((lnp.xx + bot.cos * bot.snakeWidth) - lnp.xx),
-              bot.snakeRadius * bot.speedMult
-          );
+          sidecircle = canvas.circle(bot.xx - s, bot.yy + c, r);
           canvas.drawCircle(sidecircle, 'darkred', false);
 
           //inner-left
-          sidecircle = canvas.circle(
-              lnp.xx + ((lnp.yy + bot.sin * bot.snakeWidth) - lnp.yy),
-              lnp.yy - ((lnp.xx + bot.cos * bot.snakeWidth) - lnp.xx),
-              bot.snakeRadius * bot.speedMult
-          );
+          sidecircle = canvas.circle(bot.xx + s, bot.yy - c, r);
           canvas.drawCircle(sidecircle, 'darkred', false);
 
           //outer-right
-          sidecircle = canvas.circle(
-              lnp.xx - ((lnp.yy + bot.sin * bot.snakeWidth) - lnp.yy),
-              lnp.yy + ((lnp.xx + bot.cos * bot.snakeWidth) - lnp.xx),
-              3 * bot.snakeRadius * bot.speedMult
-          );
+          sidecircle = canvas.circle(bot.xx - s, bot.yy + c, 3 * r);
           canvas.drawCircle(sidecircle, 'darkred', false);
 
           //outer-left
-          sidecircle = canvas.circle(
-              lnp.xx + ((lnp.yy + bot.sin * bot.snakeWidth) - lnp.yy),
-              lnp.yy - ((lnp.xx + bot.cos * bot.snakeWidth) - lnp.xx),
-              3 * bot.snakeRadius * bot.speedMult
-          );
+          sidecircle = canvas.circle(bot.xx + s, bot.yy - c, 3 * r);
           canvas.drawCircle(sidecircle, 'darkred', false);
         },
 
@@ -67,7 +53,7 @@ var bot = window.bot = (function(window) {
                 // coral food collection sector
                 canvas.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
                     3 * bot.snakeRadius, 'coral', false);
-                // dark red circles depict turn snakeRadius
+                // dark red circles depict snake turn radius
                 bot.drawSideCircles();
             }
         }
