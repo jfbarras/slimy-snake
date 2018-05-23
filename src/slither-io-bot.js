@@ -23,19 +23,19 @@ var bot = window.bot = (function(window) {
 
           //inner-right
           sidecircle = canvas.circle(bot.xx - s, bot.yy + c, r);
-          canvas.drawCircle(sidecircle, 'darkred', false);
+          pencil.drawCircle(sidecircle, 'darkred', false);
 
           //inner-left
           sidecircle = canvas.circle(bot.xx + s, bot.yy - c, r);
-          canvas.drawCircle(sidecircle, 'darkred', false);
+          pencil.drawCircle(sidecircle, 'darkred', false);
 
           //outer-right
           sidecircle = canvas.circle(bot.xx - s, bot.yy + c, 3 * r);
-          canvas.drawCircle(sidecircle, 'darkred', false);
+          pencil.drawCircle(sidecircle, 'darkred', false);
 
           //outer-left
           sidecircle = canvas.circle(bot.xx + s, bot.yy - c, 3 * r);
-          canvas.drawCircle(sidecircle, 'darkred', false);
+          pencil.drawCircle(sidecircle, 'darkred', false);
         },
 
         every: function() {
@@ -51,7 +51,7 @@ var bot = window.bot = (function(window) {
 
             if (window.visualDebugging > 0) {
                 // coral food collection sector
-                canvas.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
+                pencil.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
                     3 * bot.snakeRadius, 'coral', false);
                 // dark red circles depict snake turn radius
                 bot.drawSideCircles();
