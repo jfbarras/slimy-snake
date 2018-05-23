@@ -152,7 +152,8 @@ var userInterface = window.userInterface = (function(window, document) {
             }
             // Allows numeric pad to affect absolute heading.
             if (e.keyCode >= 97 && e.keyCode <= 105) {
-                actuator.changeHeadingAbs((e.keyCode-97) * Math.PI/8);
+                const howmany = [3,2,1,4,0,0,-3,-2,-1];
+                actuator.changeHeadingAbs(howmany[e.keyCode-97] * Math.PI/4);
             }
             userInterface.onPrefChange();
         },
