@@ -37,14 +37,14 @@ Overlays, like preferences or FPS, can be toggled with **H**.
 
 Statistics, like the top ten scores this session, are displayed in a mid-left overlay.
 
-Visual debugging, like food collection sector and snake turn radius, can be toggled with **Y**.
+Visual debugging, like food collection sector and snake turn radius, can be changed with **Y**.
 
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
 
 Four levels of visual debugging are planned: off, low, med, high.
 
-Numeric pad changes absolute heading. For example, **6** make the snake go east.
+Numeric pad changes absolute heading. For example, **6** makes the snake go east.
 
 ## Controls
 Key | Result
@@ -56,12 +56,11 @@ H | Hide overlays
 Z | Reset zoom
 Space | Speed boost
 
-Num | Result
-:---|:---
-1	| southwest
-3 | southeast
-7 | northwest
-9	| northeast
+&nbsp; | numpad | &nbsp;
+-------|--------|--------
+northwest	| north | northeast
+west | . | east
+southwest | south | southeast
 
 Mouse | Result
 :---|:---
