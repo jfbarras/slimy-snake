@@ -1,6 +1,12 @@
 
 var actuator = window.actuator = (function(window) {
     return {
+        // Spoofs moving the mouse to the provided coordinates.
+        setMouseCoordinates: function(point) {
+            window.xm = point.x;
+            window.ym = point.y;
+        },
+
         // Changes heading to ang.
         changeHeadingAbs: function(angle) {
             var cos = Math.cos(angle);
@@ -11,7 +17,7 @@ var actuator = window.actuator = (function(window) {
                 y: Math.round(bot.yy + 3 * bot.snakeRadius * sin)
             };
 
-            canvas.setMouseCoordinates(canvas.mapToMouse(window.goalCoordinates));
+            actuator.setMouseCoordinates(canvas.mapToMouse(window.goalCoordinates));
         }
     };
 })(window);
