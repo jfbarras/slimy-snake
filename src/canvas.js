@@ -68,6 +68,25 @@ var canvas = window.canvas = (function(window) {
 // Draws shapes to the canvas.
 var pencil = window.pencil = (function(window) {
     return {
+        // Draws a rectangle on the canvas.
+        drawRect: function(rect, color, fill, alpha) {
+            if (alpha === undefined) alpha = 1;
+
+            var context = window.mc.getContext('2d');
+            var lc = canvas.mapToCanvas({x: rect.x, y: rect.y});
+
+            context.save();
+            context.globalAlpha = alpha;
+            context.strokeStyle = color;
+            context.rect(lc.x, lc.y, rect.width * window.gsc, rect.height * window.gsc);
+            context.stroke();
+            if (fill) {
+                context.fillStyle = color;
+                context.fill();
+            }
+            context.restore();
+        },
+
         // Draws a circle on the canvas.
         drawCircle: function(circle, color, fill, alpha) {
             if (alpha === undefined) alpha = 1;
@@ -111,6 +130,25 @@ var pencil = window.pencil = (function(window) {
                 context.fill();
             }
             context.restore();
+        },
+
+        // Draws a line on the canvas.
+        drawLine: function(p1, p2, color, width) {
+            if (width === undefined) width = 5;
+
+            var context = window.mc.getContext('2d');
+            var dp1 = canvas.mapToCanvas(p1);
+            var dp2 = canvas.mapToCanvas(p2);
+
+            context.save();
+            context.beginPath();
+            context.lineWidth = width * window.gsc;
+            context.strokeStyle = color;
+            context.moveTo(dp1.x, dp1.y);
+            context.lineTo(dp2.x, dp2.y);
+            context.stroke();
+            context.restore();
         }
+
     };
 })(window);
