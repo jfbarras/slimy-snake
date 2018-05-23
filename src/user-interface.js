@@ -150,6 +150,10 @@ var userInterface = window.userInterface = (function(window, document) {
             if (e.keyCode === 90) {
                 canvas.resetZoom();
             }
+            // Allows numeric pad to affect absolute heading.
+            if (e.keyCode >= 97 && e.keyCode <= 105) {
+                actuator.changeHeadingAbs((e.keyCode-97) * Math.PI/8);
+            }
             userInterface.onPrefChange();
         },
 
