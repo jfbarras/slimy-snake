@@ -8,6 +8,14 @@ window.log = function() {
 
 var canvas = window.canvas = (function(window) {
     return {
+        // Converts Map coordinates to Mouse coordinates.
+        mapToMouse: function(point) {
+            return {
+                x: (point.x - bot.xx) * window.gsc,
+                y: (point.y - bot.yy) * window.gsc
+            };
+        },
+
         // Converts Map coordinates to Canvas cordinates.
         mapToCanvas: function(point) {
             var c = {
