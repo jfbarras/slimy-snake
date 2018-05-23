@@ -61,8 +61,13 @@ var canvas = window.canvas = (function(window) {
             if (window.desired_gsc !== undefined) {
                 window.gsc = window.desired_gsc;
             }
-        },
+        }
+    };
+})(window);
 
+// Draws shapes to the canvas.
+var pencil = window.pencil = (function(window) {
+    return {
         // Draws a circle on the canvas.
         drawCircle: function(circle, color, fill, alpha) {
             if (alpha === undefined) alpha = 1;
