@@ -44,6 +44,8 @@ Statistics and visual debugging are available even if the player fully controls 
 
 Four levels of visual debugging are planned: off, low, med, high.
 
+Numeric pad changes absolute heading. For example, **6** make the snake go east.
+
 ## Controls
 Key | Result
 :---|:---
@@ -53,6 +55,13 @@ O | Mobile rendering
 H | Hide overlays
 Z | Reset zoom
 Space | Speed boost
+
+Num | Result
+:---|:---
+1	| southwest
+3 | southeast
+7 | northwest
+9	| northeast
 
 Mouse | Result
 :---|:---
