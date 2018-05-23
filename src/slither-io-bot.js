@@ -1,4 +1,21 @@
 
+var actuator = window.actuator = (function(window) {
+    return {
+        // Changes heading to ang.
+        changeHeadingAbs: function(angle) {
+            var cos = Math.cos(angle);
+            var sin = Math.sin(angle);
+
+            window.goalCoordinates = {
+                x: Math.round(bot.xx + 3 * bot.snakeRadius * cos),
+                y: Math.round(bot.yy + 3 * bot.snakeRadius * sin)
+            };
+
+            canvas.setMouseCoordinates(canvas.mapToMouse(window.goalCoordinates));
+        }
+    };
+})(window);
+
 var bot = window.bot = (function(window) {
     return {
         state: 'init',
