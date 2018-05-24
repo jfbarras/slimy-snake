@@ -211,6 +211,13 @@ var userInterface = window.userInterface = (function(window, document) {
             }
         },
 
+        getArrow: function(ang) {
+            const ARROWS = '→↘↓↙←↖↑↗';
+            if (ang < 0) ang += Math.PI * 2;
+            var idx = Math.round(ang / (Math.PI/4)) % 8;
+            return ARROWS.charAt(idx);
+        },
+        
         onFrameUpdate: function() {
             if (!window.playing || window.snake == null) return;
             let oContent = [];
@@ -222,6 +229,11 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push(
                 ' x: ' + (Math.round(window.snake.xx + window.snake.fx) || 0) +
                 ' y: ' + (Math.round(window.snake.yy + window.snake.fy) || 0));
+
+            // Displays the direction and speed of the snake.
+            oContent.push(
+                'sp: ' + userInterface.getArrow(window.snake.ehang) +
+                ' ' + Math.round(window.snake.sp*100)/100);
 
             userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
         },
