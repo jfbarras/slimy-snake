@@ -32,17 +32,16 @@ var bot = window.bot = (function(window) {
             return Math.round(sc * 29.0);
         },
 
-        getSnakeLength: function(sct) {
-            if (sct === undefined) sct = window.snake.sct;
-            return Math.floor(15 * (window.fpsls[sct] + window.snake.fam /
-                window.fmlts[sct] - 1) - 5);
+        getSnakeLength: function(s) {
+            if (s === undefined) s = window.snake;
+            return Math.floor(15 * (window.fpsls[s.sct] + s.fam / window.fmlts[s.sct] - 1) - 5);
         },
 
         drawSideCircles: function() {
           var sidecircle;
           var s = bot.sin * bot.snakeWidth;
           var c = bot.cos * bot.snakeWidth;
-          var r = bot.snakeRadius * bot.speedMult;
+          var r = bot.snakeRadius;
 
           //inner-right
           sidecircle = canvas.circle(bot.xx - s, bot.yy + c, r);
