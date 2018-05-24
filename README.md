@@ -29,7 +29,7 @@ Mobile rendering, **good when experiencing lag**, can be toggled with **O**.
 
 Preferences, like mobile rendering, are displayed in an overlay, in the top left quadrant.
 
-Messages can be written to the development console **(F12)**. Logging can be toggled with **U**.
+{Code} Messages can be written to the development console **(F12)**. This logging can be toggled with **U**.
 
 Preferences, like logging, can be persisted across reboots.
 
@@ -37,7 +37,7 @@ Overlays, like preferences or FPS, can be toggled with **H**.
 
 Statistics, like the top ten scores this session, are displayed in a mid-left overlay.
 
-Visual debugging, like food collection sector and snake turn radius, can be changed with **Y**.
+Visual debugging, like food collection sector, can be changed with **Y**.
 
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
@@ -45,6 +45,10 @@ Statistics and visual debugging are available even if the player fully controls 
 Four levels of visual debugging are planned: off, low, med, high.
 
 Numeric pad changes absolute heading. For example, **6** makes the snake go east.
+
+Visual debugging includes four side circles showing the snake's turning radius.
+
+Speed and direction are shown in the bottom right overlay.
 
 ## Controls
 Key | Result
