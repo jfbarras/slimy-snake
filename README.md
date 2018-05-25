@@ -39,6 +39,8 @@ Statistics, like the top ten scores this session, are displayed in a mid-left ov
 
 Visual debugging, like food collection sector, can be changed with **Y**.
 
+You can conserve resources (and therefore run more bots) by enabling "no graphics mode". This is toggled with **G**.
+
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
 
@@ -56,6 +58,7 @@ Key | Result
 Y	| Visual debugging
 U	| Log debugging
 O | Mobile rendering
+G | No graphics mode
 H | Hide overlays
 Z | Reset zoom
 Space | Speed boost
