@@ -74,7 +74,7 @@ var userInterface = window.userInterface = (function(window, document) {
             Object.keys(userInterface.overlays).forEach(function(okey) {
                 var oVis = userInterface.hiddenOverlays ? 'hidden' : 'visible';
                 userInterface.overlays[okey].style.visibility = oVis;
-                window.log('overlay ' + okey + ' set to ' + oVis);
+                window.log('Overlay ' + okey + ' set to ' + oVis);
             });
         },
 
@@ -183,9 +183,15 @@ var userInterface = window.userInterface = (function(window, document) {
                 userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
                 userInterface.spreadOverlayVis();
             }
-            // Letter 'G' to toggle graphics
+            // Allows letter 'G' to toggle graphics. Also toggles visual debugging.
             if (e.keyCode === 71) {
                 userInterface.toggleGfx();
+                window.log('Graphics mode set to: ' + userInterface.gfxEnabled);
+                if (userInterface.gfxEnabled) {
+                    window.visualDebugging = userInterface.loadPreference('visualDebugging', 0);
+                } else {
+                    window.visualDebugging = 0;
+                }
             }
             // Allows letter 'O' to toggle render mode.
             if (e.keyCode === 79) {
@@ -300,8 +306,6 @@ var userInterface = window.userInterface = (function(window, document) {
             original_oef();
             if (userInterface.gfxEnabled) {
                 original_redraw();
-            } else {
-                window.visualDebugging = 0;
             }
 
             if (window.playing && window.snake !== null) {
