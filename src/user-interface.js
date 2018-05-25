@@ -2,9 +2,17 @@
 var userInterface = window.userInterface = (function(window, document) {
     // Saves original slither.io functions so they can be modified, or reenabled.
     var original_keydown = document.onkeydown;
+    var original_onmouseDown = window.onmousedown;
+    var original_oef = window.oef;
+    var original_redraw = window.redraw;
+    var original_onmousemove = window.onmousemove;
+
+    window.oef = function() {};
+    window.redraw = function() {};
 
     return {
         overlays: {},
+        gfxEnabled: true,
         hiddenOverlays: false,
 
         initOverlays: function() {
@@ -66,8 +74,41 @@ var userInterface = window.userInterface = (function(window, document) {
             Object.keys(userInterface.overlays).forEach(function(okey) {
                 var oVis = userInterface.hiddenOverlays ? 'hidden' : 'visible';
                 userInterface.overlays[okey].style.visibility = oVis;
-                window.log('overlay ' + okey + ' set to ' + oVis);
+                window.log('Overlay ' + okey + ' set to ' + oVis);
             });
+        },
+
+        toggleGfx: function() {
+            if (userInterface.gfxEnabled) {
+                var c = window.mc.getContext('2d');
+                c.save();
+                c.fillStyle = "#000000",
+                    c.fillRect(0, 0, window.mww, window.mhh),
+                    c.restore();
+
+                var d = document.createElement('div');
+                d.style.position = 'fixed';
+                d.style.top = '50%';
+                d.style.left = '50%';
+                d.style.width = '200px';
+                d.style.height = '60px';
+                d.style.color = '#C0C0C0';
+                d.style.fontFamily = 'Consolas, Verdana';
+                d.style.zIndex = 999;
+                d.style.margin = '-30px 0 0 -100px';
+                d.style.fontSize = '20px';
+                d.style.textAlign = 'center';
+                d.className = 'nsi';
+                document.body.appendChild(d);
+                userInterface.gfxOverlay = d;
+
+                window.lbf.innerHTML = '';
+            } else {
+                document.body.removeChild(userInterface.gfxOverlay);
+                userInterface.gfxOverlay = undefined;
+            }
+
+            userInterface.gfxEnabled = !userInterface.gfxEnabled;
         },
 
         // Saves a variable to local storage.
@@ -141,6 +182,16 @@ var userInterface = window.userInterface = (function(window, document) {
             if (e.keyCode === 72) {
                 userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
                 userInterface.spreadOverlayVis();
+            }
+            // Allows letter 'G' to toggle graphics. Also toggles visual debugging.
+            if (e.keyCode === 71) {
+                userInterface.toggleGfx();
+                window.log('Graphics mode set to: ' + userInterface.gfxEnabled);
+                if (userInterface.gfxEnabled) {
+                    window.visualDebugging = userInterface.loadPreference('visualDebugging', 0);
+                } else {
+                    window.visualDebugging = 0;
+                }
             }
             // Allows letter 'O' to toggle render mode.
             if (e.keyCode === 79) {
@@ -217,7 +268,7 @@ var userInterface = window.userInterface = (function(window, document) {
             var idx = Math.round(ang / (Math.PI/4)) % 8;
             return ARROWS.charAt(idx);
         },
-        
+
         onFrameUpdate: function() {
             if (!window.playing || window.snake == null) return;
             let oContent = [];
@@ -236,11 +287,26 @@ var userInterface = window.userInterface = (function(window, document) {
                 ' ' + Math.round(window.snake.sp*100)/100);
 
             userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
+
+            // Displays the full-screen black overlay
+            if (userInterface.gfxOverlay) {
+                let gContent = [];
+
+                gContent.push('<b>' + window.snake.nk + '</b>');
+                gContent.push(bot.snakeLength);
+                gContent.push('[' + window.rank + '/' + window.snake_count + ']');
+
+                userInterface.gfxOverlay.innerHTML = gContent.join('<br/>');
+            }
         },
 
         oefTimer: function() {
             var start = Date.now();
             canvas.maintainZoom();
+            original_oef();
+            if (userInterface.gfxEnabled) {
+                original_redraw();
+            }
 
             if (window.playing && window.snake !== null) {
                 bot.state = 'running';
