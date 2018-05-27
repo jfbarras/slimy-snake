@@ -49,7 +49,7 @@ var bot = window.bot = (function(window) {
         state: 'init',
         scores: [],
         ballMode: false,
-        ballDelay: 15,
+        ballDelay: 0,
 
         getSnakeWidth: function(sc) {
             if (sc === undefined) sc = window.snake.sc;
@@ -108,7 +108,9 @@ var bot = window.bot = (function(window) {
             bot.every();
 
             if (bot.actionTimeout === undefined) {
-                bot.actionTimeout = window.setTimeout(bot.actionTimer, bot.ballDelay);
+                let delay = 54.941 * bot.snakeWidth - 1519.9;
+                delay = (delay < 17) ? 17 : Math.round(delay);
+                bot.actionTimeout = window.setTimeout(bot.actionTimer, delay + bot.ballDelay);
             }
         },
 
