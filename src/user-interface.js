@@ -212,13 +212,11 @@ var userInterface = window.userInterface = (function(window, document) {
             }
             // Allows numpad '+' to incr ball size, by incr delay between turns.
             if (e.keyCode === 107) {
-                bot.ballDelay += 15;
+                bot.ballDelay++;
             }
             // Allows numpad '-' to decr ball size, by decr delay between turns.
             if (e.keyCode === 109) {
-                if (bot.ballDelay > 15) {
-                    bot.ballDelay -= 15;
-                }
+                bot.ballDelay--;
             }
             userInterface.onPrefChange();
         },
