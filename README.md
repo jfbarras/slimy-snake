@@ -52,15 +52,19 @@ Visual debugging includes four side circles showing the snake's turning radius.
 
 Speed and direction are shown in the bottom right overlay.
 
+Press **B** to turn snake into a ball. Use numpad +/- to increase/decrease ball size.
+
 ## Controls
 Key | Result
 :---|:---
 Y	| Visual debugging
 U	| Log debugging
 O | Mobile rendering
-G | No graphics mode
+G | Disable graphics
 H | Hide overlays
 Z | Reset zoom
+B | Ball mode
++/- | Increase/decrease ball size
 Space | Speed boost
 
 &nbsp; | numpad | &nbsp;
