@@ -206,6 +206,20 @@ var userInterface = window.userInterface = (function(window, document) {
                 const howmany = [3,2,1,4,0,0,-3,-2,-1];
                 actuator.changeHeadingAbs(howmany[e.keyCode-97] * Math.PI/4);
             }
+            // Allows letter 'B' to toggle ball mode.
+            if (e.keyCode === 66) {
+                bot.ballMode = !bot.ballMode;
+            }
+            // Allows numpad '+' to incr ball size, by incr delay between turns.
+            if (e.keyCode === 107) {
+                bot.ballDelay += 15;
+            }
+            // Allows numpad '-' to decr ball size, by decr delay between turns.
+            if (e.keyCode === 109) {
+                if (bot.ballDelay > 15) {
+                    bot.ballDelay -= 15;
+                }
+            }
             userInterface.onPrefChange();
         },
 
@@ -242,6 +256,7 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
             oContent.push('[U] log debugging: ' + ht(window.logDebugging));
             oContent.push('[Y] visual debugging: ' + userInterface.fourClassTC(window.visualDebugging));
+            oContent.push('[B] ball mode: ' + ht(bot.ballMode) + ' ms: ' + bot.ballDelay);
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
         },
@@ -278,8 +293,12 @@ var userInterface = window.userInterface = (function(window, document) {
 
             // Displays the X and Y of the snake.
             oContent.push(
-                ' x: ' + (Math.round(window.snake.xx + window.snake.fx) || 0) +
-                ' y: ' + (Math.round(window.snake.yy + window.snake.fy) || 0));
+                'x: ' + (Math.round(bot.xx) || 0) +
+                ' y: ' + (Math.round(bot.yy) || 0));
+
+            // Displays the width of the snake.
+            oContent.push(
+                'w: ' + (bot.snakeWidth || 0));
 
             // Displays the direction and speed of the snake.
             oContent.push(
@@ -310,7 +329,7 @@ var userInterface = window.userInterface = (function(window, document) {
 
             if (window.playing && window.snake !== null) {
                 bot.state = 'running';
-                bot.every();
+                bot.go();
             } else if (bot.state === 'running') {
                 bot.state = 'dying';
 
