@@ -104,36 +104,38 @@ var bot = window.bot = (function(window) {
 
         go: function() {
             bot.every();
-            if (baller.ballMode) {
+            if (baller.mode) {
                 baller.run();
             }
         }
     };
 })(window);
 
-var baller = window.actuator = (function(window) {
+var baller = window.baller = (function(window) {
     return {
-        ballMode: false,
-        ballDelay: 0,
-        ballAngle: Math.PI/4,
+        mode: false,
+        delay: 17,
+        offset: -1520,
+        angle: Math.PI/4,
 
         run: function() {
             if (baller.actionTimeout === undefined) {
-                let delay = 54.941 * bot.snakeWidth - 1519.9;
+                let delay = 54.941 * bot.snakeWidth + baller.offset;
                 delay = (delay < 17) ? 17 : Math.round(delay);
-                baller.ballAngle = Math.PI/4;
+                baller.angle = Math.PI/4;
                 while (delay > 1000) {
                     delay *= 0.5;
-                    baller.ballAngle *= 0.5;
+                    baller.angle *= 0.5;
                 }
-                baller.actionTimeout = window.setTimeout(baller.actionTimer, delay + baller.ballDelay);
+                baller.delay = delay;
+                baller.actionTimeout = window.setTimeout(baller.actionTimer, baller.delay);
             }
         },
 
         actionTimer: function() {
             if (window.playing && window.snake !== null && window.snake.alive_amt === 1) {
-                if (baller.ballMode) {
-                    actuator.changeHeadingRel(baller.ballAngle);
+                if (baller.mode) {
+                    actuator.changeHeadingRel(baller.angle);
                 }
             }
             baller.actionTimeout = undefined;
