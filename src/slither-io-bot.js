@@ -18,6 +18,28 @@ var actuator = window.actuator = (function(window) {
             };
 
             actuator.setMouseCoordinates(canvas.mapToMouse(window.goalCoordinates));
+        },
+
+        // Changes heading by ang.
+        changeHeadingRel: function(angle) {
+            var heading = {
+                x: bot.xx + 3 * bot.snakeRadius * bot.cos,
+                y: bot.yy + 3 * bot.snakeRadius * bot.sin
+            };
+
+            var cos = Math.cos(-angle);
+            var sin = Math.sin(-angle);
+
+            window.goalCoordinates = {
+                x: Math.round(
+                    cos * (heading.x - bot.xx) -
+                    sin * (heading.y - bot.yy) + bot.xx),
+                y: Math.round(
+                    sin * (heading.x - bot.xx) +
+                    cos * (heading.y - bot.yy) + bot.yy)
+            };
+
+            actuator.setMouseCoordinates(canvas.mapToMouse(window.goalCoordinates));
         }
     };
 })(window);
@@ -26,6 +48,9 @@ var bot = window.bot = (function(window) {
     return {
         state: 'init',
         scores: [],
+        ballMode: false,
+        ballDelay: 0,
+        ballAngle: Math.PI/4,
 
         getSnakeWidth: function(sc) {
             if (sc === undefined) sc = window.snake.sc;
@@ -78,6 +103,30 @@ var bot = window.bot = (function(window) {
                 // dark red circles depict snake turn radius
                 bot.drawSideCircles();
             }
+        },
+
+        go: function() {
+            bot.every();
+
+            if (bot.actionTimeout === undefined) {
+                let delay = 54.941 * bot.snakeWidth - 1519.9;
+                delay = (delay < 17) ? 17 : Math.round(delay);
+                bot.ballAngle = Math.PI/4;
+                while (delay > 1000) {
+                    delay *= 0.5;
+                    bot.ballAngle *= 0.5;
+                }
+                bot.actionTimeout = window.setTimeout(bot.actionTimer, delay + bot.ballDelay);
+            }
+        },
+
+        actionTimer: function() {
+            if (window.playing && window.snake !== null && window.snake.alive_amt === 1) {
+                if (bot.ballMode) {
+                    actuator.changeHeadingRel(bot.ballAngle);
+                }
+            }
+            bot.actionTimeout = undefined;
         }
     };
 })(window);
