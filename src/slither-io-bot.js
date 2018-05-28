@@ -50,6 +50,7 @@ var bot = window.bot = (function(window) {
         scores: [],
         ballMode: false,
         ballDelay: 0,
+        ballAngle: Math.PI/4,
 
         getSnakeWidth: function(sc) {
             if (sc === undefined) sc = window.snake.sc;
@@ -110,6 +111,11 @@ var bot = window.bot = (function(window) {
             if (bot.actionTimeout === undefined) {
                 let delay = 54.941 * bot.snakeWidth - 1519.9;
                 delay = (delay < 17) ? 17 : Math.round(delay);
+                bot.ballAngle = Math.PI/4;
+                while (delay > 1000) {
+                    delay *= 0.5;
+                    bot.ballAngle *= 0.5;
+                }
                 bot.actionTimeout = window.setTimeout(bot.actionTimer, delay + bot.ballDelay);
             }
         },
@@ -117,7 +123,7 @@ var bot = window.bot = (function(window) {
         actionTimer: function() {
             if (window.playing && window.snake !== null && window.snake.alive_amt === 1) {
                 if (bot.ballMode) {
-                    actuator.changeHeadingRel(Math.PI / 4);
+                    actuator.changeHeadingRel(bot.ballAngle);
                 }
             }
             bot.actionTimeout = undefined;
