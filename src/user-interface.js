@@ -208,15 +208,15 @@ var userInterface = window.userInterface = (function(window, document) {
             }
             // Allows letter 'B' to toggle ball mode.
             if (e.keyCode === 66) {
-                bot.ballMode = !bot.ballMode;
+                baller.mode = !baller.mode;
             }
             // Allows numpad '+' to incr ball size, by incr delay between turns.
             if (e.keyCode === 107) {
-                bot.ballDelay++;
+                baller.offset++;
             }
             // Allows numpad '-' to decr ball size, by decr delay between turns.
             if (e.keyCode === 109) {
-                bot.ballDelay--;
+                baller.offset--;
             }
             userInterface.onPrefChange();
         },
@@ -254,7 +254,7 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
             oContent.push('[U] log debugging: ' + ht(window.logDebugging));
             oContent.push('[Y] visual debugging: ' + userInterface.fourClassTC(window.visualDebugging));
-            oContent.push('[B] ball mode: ' + ht(bot.ballMode) + ' ms: ' + bot.ballDelay);
+            oContent.push('[B] ball mode: ' + ht(baller.mode) + ' at ' + baller.offset);
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
         },

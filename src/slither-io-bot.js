@@ -48,9 +48,6 @@ var bot = window.bot = (function(window) {
     return {
         state: 'init',
         scores: [],
-        ballMode: false,
-        ballDelay: 0,
-        ballAngle: Math.PI/4,
 
         getSnakeWidth: function(sc) {
             if (sc === undefined) sc = window.snake.sc;
@@ -107,26 +104,41 @@ var bot = window.bot = (function(window) {
 
         go: function() {
             bot.every();
+            if (baller.mode) {
+                baller.run();
+            }
+        }
+    };
+})(window);
 
-            if (bot.actionTimeout === undefined) {
-                let delay = 54.941 * bot.snakeWidth - 1519.9;
+var baller = window.baller = (function(window) {
+    return {
+        mode: false,
+        delay: 17,
+        offset: -1520,
+        angle: Math.PI/4,
+
+        run: function() {
+            if (baller.actionTimeout === undefined) {
+                let delay = 54.941 * bot.snakeWidth + baller.offset;
                 delay = (delay < 17) ? 17 : Math.round(delay);
-                bot.ballAngle = Math.PI/4;
+                baller.angle = Math.PI/4;
                 while (delay > 1000) {
                     delay *= 0.5;
-                    bot.ballAngle *= 0.5;
+                    baller.angle *= 0.5;
                 }
-                bot.actionTimeout = window.setTimeout(bot.actionTimer, delay + bot.ballDelay);
+                baller.delay = delay;
+                baller.actionTimeout = window.setTimeout(baller.actionTimer, baller.delay);
             }
         },
 
         actionTimer: function() {
             if (window.playing && window.snake !== null && window.snake.alive_amt === 1) {
-                if (bot.ballMode) {
-                    actuator.changeHeadingRel(bot.ballAngle);
+                if (baller.mode) {
+                    actuator.changeHeadingRel(baller.angle);
                 }
             }
-            bot.actionTimeout = undefined;
+            baller.actionTimeout = undefined;
         }
     };
 })(window);
