@@ -59,27 +59,18 @@ var bot = window.bot = (function(window) {
             return Math.floor(15 * (window.fpsls[s.sct] + s.fam / window.fmlts[s.sct] - 1) - 5);
         },
 
-        drawSideCircles: function() {
-          var sidecircle;
-          var s = bot.sin * bot.snakeWidth;
-          var c = bot.cos * bot.snakeWidth;
-          var r = bot.snakeRadius;
-
-          //inner-right
-          sidecircle = canvas.circle(bot.xx - s, bot.yy + c, r);
-          pencil.drawCircle(sidecircle, 'darkred', false);
-
-          //inner-left
-          sidecircle = canvas.circle(bot.xx + s, bot.yy - c, r);
-          pencil.drawCircle(sidecircle, 'darkred', false);
-
-          //outer-right
-          sidecircle = canvas.circle(bot.xx - s, bot.yy + c, 3 * r);
-          pencil.drawCircle(sidecircle, 'darkred', false);
-
-          //outer-left
-          sidecircle = canvas.circle(bot.xx + s, bot.yy - c, 3 * r);
-          pencil.drawCircle(sidecircle, 'darkred', false);
+        // Returns a circle offsetted from the snake's head. Offsets in number of widths.
+        // dw < 0 is port (left). dw > 0 is starboard. dl < 0 is astern. dl > 0 is ahead.
+        // @param {number} dw -- offsets width-wise
+        // @param {number} dl -- offsets length-wise
+        // @param {number} rm -- radius multiplier
+        getHeadCircle: function(dw, dl, rm) {
+            var s = bot.sin * bot.snakeWidth;
+            var c = bot.cos * bot.snakeWidth;
+            return canvas.circle(
+                bot.xx + dl * c + s + (dw + 1) * (bot.cos - s),
+                bot.yy + dl * s - c + (dw + 1) * (bot.sin + c),
+                rm * bot.snakeRadius);
         },
 
         every: function() {
@@ -98,7 +89,10 @@ var bot = window.bot = (function(window) {
                 pencil.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
                     3 * bot.snakeRadius, 'coral', false);
                 // dark red circles depict snake turn radius
-                bot.drawSideCircles();
+                pencil.drawCircle(bot.getHeadCircle(-1,0,1),'darkred');
+                pencil.drawCircle(bot.getHeadCircle( 1,0,1),'darkred');
+                pencil.drawCircle(bot.getHeadCircle(-1,0,3),'darkred');
+                pencil.drawCircle(bot.getHeadCircle( 1,0,3),'darkred');
             }
         },
 
