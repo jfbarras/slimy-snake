@@ -115,6 +115,14 @@ var baller = window.baller = (function(window) {
         offset: -1820,
         angle: Math.PI / 4,
 
+        getInfo: function() {
+            if (baller.mode) {
+                return '1 {o:' + baller.offset + ',d:' + baller.delay + '}';
+            } else {
+                return '0';
+            }
+        },
+
         run: function() {
             if (baller.actionTimeout !== undefined) return;
             if (baller.mode) {
