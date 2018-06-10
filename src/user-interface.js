@@ -283,7 +283,7 @@ var userInterface = window.userInterface = (function(window, document) {
         },
 
         onFrameUpdate: function() {
-            if (!window.playing || window.snake == null) return;
+            if (!bot.isAlive()) return;
             let oContent = [];
 
             // Displays the frame rate.
@@ -325,7 +325,7 @@ var userInterface = window.userInterface = (function(window, document) {
                 original_redraw();
             }
 
-            if (window.playing && window.snake !== null) {
+            if (bot.isAlive()) {
                 bot.state = 'running';
                 bot.go();
             } else if (bot.state === 'running') {

@@ -73,6 +73,11 @@ var bot = window.bot = (function(window) {
                 rm * bot.snakeRadius);
         },
 
+        // Checks if the player's snake is fully alive.
+        isAlive: function() {
+            return (window.playing && window.snake !== null && window.snake.alive_amt === 1);
+        },
+
         every: function() {
             bot.cos = Math.cos(window.snake.ang);
             bot.sin = Math.sin(window.snake.ang);
@@ -98,9 +103,7 @@ var bot = window.bot = (function(window) {
 
         go: function() {
             bot.every();
-            if (baller.mode) {
-                baller.run();
-            }
+            baller.run();
         }
     };
 })(window);
@@ -113,7 +116,8 @@ var baller = window.baller = (function(window) {
         angle: Math.PI / 4,
 
         run: function() {
-            if (baller.actionTimeout === undefined) {
+            if (baller.actionTimeout !== undefined) return;
+            if (baller.mode) {
                 let delay = 64 * bot.snakeWidth + baller.offset;
                 if (delay < 17) delay = 17;
                 let angle = Math.PI / 4;
@@ -128,7 +132,7 @@ var baller = window.baller = (function(window) {
         },
 
         actionTimer: function() {
-            if (window.playing && window.snake !== null && window.snake.alive_amt === 1) {
+            if (bot.isAlive()) {
                 if (baller.mode) {
                     actuator.changeHeadingRel(baller.angle);
                 }
