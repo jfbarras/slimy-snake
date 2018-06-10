@@ -86,13 +86,13 @@ var bot = window.bot = (function(window) {
 
             if (window.visualDebugging > 0) {
                 // coral food collection sector
-                pencil.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
+                pencil.drawAngle(window.snake.ehang - Math.PI / 4, window.snake.ehang + Math.PI / 4,
                     3 * bot.snakeRadius, 'coral', false);
                 // dark red circles depict snake turn radius
-                pencil.drawCircle(bot.getHeadCircle(-1,0,1),'darkred');
-                pencil.drawCircle(bot.getHeadCircle( 1,0,1),'darkred');
-                pencil.drawCircle(bot.getHeadCircle(-1,0,3),'darkred');
-                pencil.drawCircle(bot.getHeadCircle( 1,0,3),'darkred');
+                pencil.drawCircle(bot.getHeadCircle(-1, 0, 1), 'darkred');
+                pencil.drawCircle(bot.getHeadCircle( 1, 0, 1), 'darkred');
+                pencil.drawCircle(bot.getHeadCircle(-1, 0, 3), 'darkred');
+                pencil.drawCircle(bot.getHeadCircle( 1, 0, 3), 'darkred');
             }
         },
 
@@ -109,19 +109,20 @@ var baller = window.baller = (function(window) {
     return {
         mode: false,
         delay: 17,
-        offset: -1520,
-        angle: Math.PI/4,
+        offset: -1820,
+        angle: Math.PI / 4,
 
         run: function() {
             if (baller.actionTimeout === undefined) {
-                let delay = 54.941 * bot.snakeWidth + baller.offset;
-                delay = (delay < 17) ? 17 : Math.round(delay);
-                baller.angle = Math.PI/4;
-                while (delay > 1000) {
+                let delay = 64 * bot.snakeWidth + baller.offset;
+                if (delay < 17) delay = 17;
+                let angle = Math.PI / 4;
+                while (delay > 500) {
                     delay *= 0.5;
-                    baller.angle *= 0.5;
+                    angle *= 0.5;
                 }
                 baller.delay = delay;
+                baller.angle = angle;
                 baller.actionTimeout = window.setTimeout(baller.actionTimer, baller.delay);
             }
         },
