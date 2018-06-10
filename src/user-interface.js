@@ -254,7 +254,7 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
             oContent.push('[U] log debugging: ' + ht(window.logDebugging));
             oContent.push('[Y] visual debugging: ' + userInterface.fourClassTC(window.visualDebugging));
-            oContent.push('[B] ball mode: ' + ht(baller.mode) + ' at ' + baller.offset);
+            oContent.push('[B] baller: ' + baller.getInfo());
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
         },
@@ -283,7 +283,7 @@ var userInterface = window.userInterface = (function(window, document) {
         },
 
         onFrameUpdate: function() {
-            if (!window.playing || window.snake == null) return;
+            if (!bot.isAlive()) return;
             let oContent = [];
 
             // Displays the frame rate.
@@ -294,12 +294,9 @@ var userInterface = window.userInterface = (function(window, document) {
                 'x: ' + (Math.round(bot.xx) || 0) +
                 ' y: ' + (Math.round(bot.yy) || 0));
 
-            // Displays the width of the snake.
+            // Displays the width, direction and speed of the snake.
             oContent.push(
-                'w: ' + (bot.snakeWidth || 0));
-
-            // Displays the direction and speed of the snake.
-            oContent.push(
+                'w: ' + (bot.snakeWidth || 0) + ' ' +
                 'sp: ' + userInterface.getArrow(window.snake.ehang) +
                 ' ' + Math.round(window.snake.sp*100)/100);
 
@@ -325,7 +322,7 @@ var userInterface = window.userInterface = (function(window, document) {
                 original_redraw();
             }
 
-            if (window.playing && window.snake !== null) {
+            if (bot.isAlive()) {
                 bot.state = 'running';
                 bot.go();
             } else if (bot.state === 'running') {

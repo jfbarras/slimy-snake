@@ -73,6 +73,11 @@ var bot = window.bot = (function(window) {
                 rm * bot.snakeRadius);
         },
 
+        // Checks if the player's snake is fully alive.
+        isAlive: function() {
+            return (window.playing && window.snake !== null && window.snake.alive_amt === 1);
+        },
+
         every: function() {
             bot.cos = Math.cos(window.snake.ang);
             bot.sin = Math.sin(window.snake.ang);
@@ -86,21 +91,19 @@ var bot = window.bot = (function(window) {
 
             if (window.visualDebugging > 0) {
                 // coral food collection sector
-                pencil.drawAngle(window.snake.ehang - Math.PI/4, window.snake.ehang + Math.PI/4,
+                pencil.drawAngle(window.snake.ehang - Math.PI / 4, window.snake.ehang + Math.PI / 4,
                     3 * bot.snakeRadius, 'coral', false);
                 // dark red circles depict snake turn radius
-                pencil.drawCircle(bot.getHeadCircle(-1,0,1),'darkred');
-                pencil.drawCircle(bot.getHeadCircle( 1,0,1),'darkred');
-                pencil.drawCircle(bot.getHeadCircle(-1,0,3),'darkred');
-                pencil.drawCircle(bot.getHeadCircle( 1,0,3),'darkred');
+                pencil.drawCircle(bot.getHeadCircle(-1, 0, 1), 'darkred');
+                pencil.drawCircle(bot.getHeadCircle( 1, 0, 1), 'darkred');
+                pencil.drawCircle(bot.getHeadCircle(-1, 0, 3), 'darkred');
+                pencil.drawCircle(bot.getHeadCircle( 1, 0, 3), 'darkred');
             }
         },
 
         go: function() {
             bot.every();
-            if (baller.mode) {
-                baller.run();
-            }
+            baller.run();
         }
     };
 })(window);
@@ -109,25 +112,35 @@ var baller = window.baller = (function(window) {
     return {
         mode: false,
         delay: 17,
-        offset: -1520,
-        angle: Math.PI/4,
+        offset: -1820,
+        angle: Math.PI / 4,
+
+        getInfo: function() {
+            if (baller.mode) {
+                return '1 {o:' + baller.offset + ',d:' + baller.delay + '}';
+            } else {
+                return '0';
+            }
+        },
 
         run: function() {
-            if (baller.actionTimeout === undefined) {
-                let delay = 54.941 * bot.snakeWidth + baller.offset;
-                delay = (delay < 17) ? 17 : Math.round(delay);
-                baller.angle = Math.PI/4;
-                while (delay > 1000) {
+            if (baller.actionTimeout !== undefined) return;
+            if (baller.mode) {
+                let delay = 64 * bot.snakeWidth + baller.offset;
+                if (delay < 17) delay = 17;
+                let angle = Math.PI / 4;
+                while (delay > 500) {
                     delay *= 0.5;
-                    baller.angle *= 0.5;
+                    angle *= 0.5;
                 }
                 baller.delay = delay;
+                baller.angle = angle;
                 baller.actionTimeout = window.setTimeout(baller.actionTimer, baller.delay);
             }
         },
 
         actionTimer: function() {
-            if (window.playing && window.snake !== null && window.snake.alive_amt === 1) {
+            if (bot.isAlive()) {
                 if (baller.mode) {
                     actuator.changeHeadingRel(baller.angle);
                 }
