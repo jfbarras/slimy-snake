@@ -41,6 +41,8 @@ Visual debugging, like food collection sector, can be changed with **Y**.
 
 You can conserve resources (and therefore run more bots) by enabling "no graphics mode". This is toggled with **G**.
 
+Bot detects the outer wall.
+
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
 
@@ -50,7 +52,7 @@ Numeric pad changes absolute heading. For example, **6** makes the snake go east
 
 Visual debugging includes four side circles showing the snake's turning radius.
 
-Speed and direction are shown in the bottom right overlay.
+Width, speed and direction are shown in the bottom right overlay.
 
 Press **B** to turn snake into a ball. Use numpad +/- to increase/decrease ball size.
 
