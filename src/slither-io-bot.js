@@ -87,15 +87,8 @@ var wall = window.wall = (function(window) {
                 wuss.collisionPoints.push(scPoint);
                 wuss.addCollisionAngle(scPoint);
                 if (window.visualDebugging > 1) {
-                    pencil.drawCircle(canvas.circle(
-                        scPoint.xx,
-                        scPoint.yy,
-                        scPoint.radius
-                    ), 'yellow', false);
-                    pencil.drawLine(
-                        {x: bot.xx, y: bot.yy},
-                        {x: scPoint.xx, y: scPoint.yy},
-                        'red', 2);
+                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
+                        'yellow', false);
                 }
             }
         }
@@ -137,6 +130,21 @@ var wuss = window.wuss = (function(window) {
             wuss.collisionPoints = [];
             wuss.collisionAngles = [];
             wall.seeWall();
+            wuss.collisionPoints.sort(bot.sortDistance);
+            if (window.visualDebugging > 1) {
+                for (var i = 0; i < wuss.collisionAngles.length; i++) {
+                    if (wuss.collisionAngles[i] !== undefined) {
+                        pencil.drawLine({
+                                x: bot.xx,
+                                y: bot.yy
+                            }, {
+                                x: wuss.collisionAngles[i].x,
+                                y: wuss.collisionAngles[i].y
+                            },
+                            'red', 2);
+                    }
+                }
+            }
         }
     };
 })(window);
@@ -202,6 +210,11 @@ var bot = window.bot = (function(window) {
                 return 0;
             }
             return index;
+        },
+
+        // Sorts by property 'distance' ascending.
+        sortDistance: function(a, b) {
+            return a.distance - b.distance;
         },
 
         every: function() {
