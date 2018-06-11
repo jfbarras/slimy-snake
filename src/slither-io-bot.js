@@ -44,6 +44,55 @@ var actuator = window.actuator = (function(window) {
     };
 })(window);
 
+// Sees the outer wall.
+var wall = window.wall = (function(window) {
+    return {
+        MID_X: 0,
+        MID_Y: 0,
+        MAP_R: 0,
+        MIN_D: 0,
+
+        isWallClose: function() {
+            if (wall.MID_X === 0) {
+                wall.MID_X = window.grd;
+                wall.MID_Y = window.grd;
+                wall.MAP_R = window.grd * 0.98;
+                wall.MIN_D = Math.pow(wall.MAP_R - 1000, 2);
+            }
+            var dist = canvas.getDistance2(wall.MID_X, wall.MID_Y, bot.xx, bot.yy);
+            return (dist > wall.MIN_D);
+        },
+
+        seeWall: function() {
+            if (!wall.isWallClose()) return;
+            var midAng = canvas.fastAtan2(bot.yy - wall.MID_X, bot.xx - wall.MID_Y);
+            for (var i = -2; i <= 2; i++) {
+                var scPoint = {
+                    xx: wall.MID_X + wall.MAP_R * Math.cos(midAng + i * 0.005),
+                    yy: wall.MID_Y + wall.MAP_R * Math.sin(midAng + i * 0.005),
+                    snake: -1,
+                    radius: bot.snakeWidth,
+                    type: 'wall'
+                };
+//                canvas.getDistance2FromSnake(scPoint);
+//                bot.collisionPoints.push(scPoint);
+//                bot.addCollisionAngle(scPoint);
+                if (window.visualDebugging > 1) {
+                    pencil.drawCircle(canvas.circle(
+                        scPoint.xx,
+                        scPoint.yy,
+                        scPoint.radius
+                    ), 'yellow', false);
+                    pencil.drawLine(
+                        {x: bot.xx, y: bot.yy},
+                        {x: scPoint.xx, y: scPoint.yy},
+                        'red', 2);
+                }
+            }
+        }
+    };
+})(window);
+
 var bot = window.bot = (function(window) {
     return {
         state: 'init',
@@ -103,6 +152,7 @@ var bot = window.bot = (function(window) {
 
         go: function() {
             bot.every();
+            wall.seeWall();
             baller.run();
         }
     };
