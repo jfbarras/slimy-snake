@@ -44,8 +44,115 @@ var actuator = window.actuator = (function(window) {
     };
 })(window);
 
+// Sees the outer wall.
+var wall = window.wall = (function(window) {
+    return {
+        opt: {
+            // distance from the wall at which you start seeing it
+            distance: 1000,
+            // number of wall segments modelled; expects odd number
+            segments: 5,
+            // how close the wall segments are modelled, in radians
+            arc: 0.004363
+        },
+        MID_X: 0,
+        MID_Y: 0,
+        MAP_R: 0,
+        MIN_D: 0,
+
+        isWallClose: function() {
+            if (wall.MID_X === 0) {
+                wall.MID_X = window.grd;
+                wall.MID_Y = window.grd;
+                wall.MAP_R = window.grd * 0.98;
+                wall.MIN_D = Math.pow(wall.MAP_R - wall.opt.distance, 2);
+            }
+            var dist = canvas.getDistance2(wall.MID_X, wall.MID_Y, bot.xx, bot.yy);
+            return (dist > wall.MIN_D);
+        },
+
+        seeWall: function() {
+            if (!wall.isWallClose()) return;
+            var midAng = canvas.fastAtan2(bot.yy - wall.MID_X, bot.xx - wall.MID_Y);
+            var j = (wall.opt.segments - 1) / 2;
+            for (var i = -j; i <= j; i++) {
+                var scPoint = {
+                    xx: wall.MID_X + wall.MAP_R * Math.cos(midAng + i * wall.opt.arc),
+                    yy: wall.MID_Y + wall.MAP_R * Math.sin(midAng + i * wall.opt.arc),
+                    snake: -1,
+                    radius: bot.snakeWidth,
+                    type: 'wall'
+                };
+                bot.injectDistance2(scPoint);
+                wuss.collisionPoints.push(scPoint);
+                wuss.addCollisionAngle(scPoint);
+                if (window.visualDebugging > 1) {
+                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
+                        'yellow', false);
+                }
+            }
+        }
+    };
+})(window);
+
+// Sees
+var wuss = window.wuss = (function(window) {
+    return {
+        collisionPoints: [],
+        collisionAngles: [],
+
+        // Adds to the collisionAngles array, if distance is closer.
+        addCollisionAngle: function(sp) {
+            var ang = canvas.fastAtan2(
+                Math.round(sp.yy - bot.yy),
+                Math.round(sp.xx - bot.xx));
+            var aIndex = bot.getAngleIndex(ang);
+
+            var actualDistance = Math.round(Math.pow(
+                Math.sqrt(sp.distance) - sp.radius, 2));
+
+            if (wuss.collisionAngles[aIndex] === undefined ||
+                wuss.collisionAngles[aIndex].distance > sp.distance) {
+                wuss.collisionAngles[aIndex] = {
+                    x: Math.round(sp.xx),
+                    y: Math.round(sp.yy),
+                    ang: ang,
+                    snake: sp.snake,
+                    distance: actualDistance,
+                    radius: sp.radius,
+                    aIndex: aIndex
+                };
+            }
+        },
+
+        // Sees
+        scan: function() {
+            wuss.collisionPoints = [];
+            wuss.collisionAngles = [];
+            wall.seeWall();
+            wuss.collisionPoints.sort(bot.sortDistance);
+            if (window.visualDebugging > 1) {
+                for (var i = 0; i < wuss.collisionAngles.length; i++) {
+                    if (wuss.collisionAngles[i] !== undefined) {
+                        pencil.drawLine({
+                                x: bot.xx,
+                                y: bot.yy
+                            }, {
+                                x: wuss.collisionAngles[i].x,
+                                y: wuss.collisionAngles[i].y
+                            },
+                            'red', 2);
+                    }
+                }
+            }
+        }
+    };
+})(window);
+
 var bot = window.bot = (function(window) {
     return {
+        ARCSIZE: Math.PI / 8,
+        MAXARC: (2 * Math.PI) / (Math.PI / 8),
         state: 'init',
         scores: [],
 
@@ -78,6 +185,38 @@ var bot = window.bot = (function(window) {
             return (window.playing && window.snake !== null && window.snake.alive_amt === 1);
         },
 
+        // Gives the specified point a distance property set to
+        // the distance squared from the snake's head.
+        injectDistance2: function(point) {
+            point.distance = canvas.getDistance2(bot.xx, bot.yy, point.xx, point.yy);
+        },
+
+        // Gets the angle index from specified angle.
+        getAngleIndex: function(angle) {
+            const TP = 2 * Math.PI;
+            var index;
+
+            while (angle < 0) {
+                angle += TP;
+            }
+
+            while (angle > TP) {
+                angle -= TP;
+            }
+
+            index = Math.round(angle * (1 / (TP / bot.MAXARC)));
+
+            if (index === bot.MAXARC) {
+                return 0;
+            }
+            return index;
+        },
+
+        // Sorts by property 'distance' ascending.
+        sortDistance: function(a, b) {
+            return a.distance - b.distance;
+        },
+
         every: function() {
             bot.cos = Math.cos(window.snake.ang);
             bot.sin = Math.sin(window.snake.ang);
@@ -103,6 +242,7 @@ var bot = window.bot = (function(window) {
 
         go: function() {
             bot.every();
+            wuss.scan();
             baller.run();
         }
     };

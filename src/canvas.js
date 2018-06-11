@@ -50,6 +50,27 @@ var canvas = window.canvas = (function(window) {
             return c;
         },
 
+        // Approximates the value of the arc tangent of y/ x.
+        fastAtan2: function(y, x) {
+            const QPI = Math.PI / 4;
+            const TQPI = 3 * Math.PI / 4;
+            var r = 0.0;
+            var angle = 0.0;
+            var abs_y = Math.abs(y) + 1e-10; // kludge to prevent 0/0 condition
+            if (x < 0) {
+                r = (x + abs_y) / (abs_y - x);
+                angle = TQPI;
+            } else {
+                r = (x - abs_y) / (x + abs_y);
+                angle = QPI;
+            }
+            angle += (0.1963 * r * r - 0.9817) * r;
+            if (y < 0) {
+                return -angle; // negate if in quad III or IV
+            }
+            return angle;
+        },
+
         // Adjusts zoom in response to mouse wheel.
         setZoom: function(e) {
             if (window.gsc) {
@@ -69,6 +90,12 @@ var canvas = window.canvas = (function(window) {
             if (window.desired_gsc !== undefined) {
                 window.gsc = window.desired_gsc;
             }
+        },
+
+        // Computes distance squared.
+        getDistance2: function(x1, y1, x2, y2) {
+            var distance2 = Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
+            return distance2;
         }
     };
 })(window);
