@@ -41,7 +41,7 @@ Visual debugging, like food collection sector, can be changed with **Y**.
 
 You can conserve resources (and therefore run more bots) by enabling "no graphics mode". This is toggled with **G**.
 
-Bot detects the outer wall.
+Bot detects the outer wall. It also detects current and predicted snake head position.
 
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
