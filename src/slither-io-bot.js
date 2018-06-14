@@ -47,6 +47,10 @@ var actuator = window.actuator = (function(window) {
 // Sees snake heads.
 var head = window.head = (function(window) {
     return {
+        opt: {
+            // prediction multiplier. applied on radius x speed
+            prediMult: 2.5,
+        },
 
         seeHeads: function() {
             var scPoint;
@@ -57,9 +61,9 @@ var head = window.head = (function(window) {
                     window.snakes[snake].alive_amt !== 1) continue;
 
                 var s = window.snakes[snake];
-                var snakeRadius = bot.getSnakeWidth(s.sc);
+                var snakeRadius = bot.getSnakeWidth(s.sc) / 2;
                 var sSpMult = Math.min(1, s.sp / 5.78 - 0.2);
-                var sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 4) * sSpMult * 10 / 4; // bot.opt.radiusMult
+                var sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.prediMult;
 
                 scPoint = {
                     xx: s.xx + Math.cos(s.ehang) * sRadius * 0.75,
@@ -74,24 +78,20 @@ var head = window.head = (function(window) {
                 wuss.collisionPoints.push(scPoint);
 
                 if (window.visualDebugging) {
-                    pencil.drawCircle(canvas.circle(
-                            scPoint.xx,
-                            scPoint.yy,
-                            scPoint.radius),
+                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
                         'yellow', false);
                 }
 
                 scPoint.xx = s.xx;
                 scPoint.yy = s.yy;
+                scPoint.radius = 3 * snakeRadius;
 
+                bot.injectDistance2(scPoint);
                 wuss.addCollisionAngle(scPoint);
                 wuss.collisionPoints.push(scPoint);
 
                 if (window.visualDebugging) {
-                    pencil.drawCircle(canvas.circle(
-                            scPoint.xx,
-                            scPoint.yy,
-                            scPoint.radius),
+                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
                         'yellow', false);
                 }
             }
@@ -197,7 +197,7 @@ var wuss = window.wuss = (function(window) {
                                 x: wuss.collisionAngles[i].x,
                                 y: wuss.collisionAngles[i].y
                             },
-                            'red', 2);
+                            'gray', 2);
                     }
                 }
             }
