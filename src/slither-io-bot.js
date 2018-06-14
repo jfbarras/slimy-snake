@@ -44,6 +44,61 @@ var actuator = window.actuator = (function(window) {
     };
 })(window);
 
+// Sees snake heads.
+var head = window.head = (function(window) {
+    return {
+        opt: {
+            // prediction multiplier. applied on radius x speed
+            prediMult: 2.5,
+        },
+
+        seeHeads: function() {
+            var scPoint;
+            for (var snake = 0, ls = window.snakes.length; snake < ls; snake++) {
+                scPoint = undefined;
+
+                if (window.snakes[snake].id === window.snake.id ||
+                    window.snakes[snake].alive_amt !== 1) continue;
+
+                var s = window.snakes[snake];
+                var snakeRadius = bot.getSnakeWidth(s.sc) / 2;
+                var sSpMult = Math.min(1, s.sp / 5.78 - 0.2);
+                var sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.prediMult;
+
+                scPoint = {
+                    xx: s.xx + Math.cos(s.ehang) * sRadius * 0.75,
+                    yy: s.yy + Math.sin(s.ehang) * sRadius * 0.75,
+                    snake: snake,
+                    radius: sRadius,
+                    type: 'head'
+                };
+
+                bot.injectDistance2(scPoint);
+                wuss.addCollisionAngle(scPoint);
+                wuss.collisionPoints.push(scPoint);
+
+                if (window.visualDebugging) {
+                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
+                        'yellow', false);
+                }
+
+                scPoint.xx = s.xx;
+                scPoint.yy = s.yy;
+                scPoint.radius = 3 * snakeRadius;
+
+                bot.injectDistance2(scPoint);
+                wuss.addCollisionAngle(scPoint);
+                wuss.collisionPoints.push(scPoint);
+
+                if (window.visualDebugging) {
+                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
+                        'yellow', false);
+                }
+            }
+        }
+    };
+})(window);
+
 // Sees the outer wall.
 var wall = window.wall = (function(window) {
     return {
@@ -129,6 +184,7 @@ var wuss = window.wuss = (function(window) {
         scan: function() {
             wuss.collisionPoints = [];
             wuss.collisionAngles = [];
+            head.seeHeads();
             wall.seeWall();
             wuss.collisionPoints.sort(bot.sortDistance);
             if (window.visualDebugging > 1) {
@@ -141,7 +197,7 @@ var wuss = window.wuss = (function(window) {
                                 x: wuss.collisionAngles[i].x,
                                 y: wuss.collisionAngles[i].y
                             },
-                            'red', 2);
+                            'gray', 2);
                     }
                 }
             }
