@@ -104,45 +104,44 @@ var head = window.head = (function(window) {
 // Sees snake heads.
 var part = window.part = (function(window) {
     return {
+        isInBox: function(s, pts) {
+            var sectorSide = Math.floor(Math.sqrt(window.sectors.length)) * window.sector_size;
+            var sectorBox = canvas.rect(
+                bot.xx - (sectorSide / 2),
+                bot.yy - (sectorSide / 2),
+                sectorSide, sectorSide);
+            return canvas.pointInRect({x: s.pts[pts].xx, y: s.pts[pts].yy}, sectorBox);
+        },
+
         seeParts: function(snake) {
             var s = window.snakes[snake];
             var snakeRadius = bot.getSnakeWidth(s.sc) / 2;
             var scPoint = {
                 snake: snake,
-                radius: (snakeRadius / 2 + bot.snakeWidth * 1.5) * 10 / 10, // bot.opt.radiusMult
+                radius: (snakeRadius + bot.snakeWidth * 1.5),
                 type: 'part'
             };
             for (var pts = 0, lp = s.pts.length; pts < lp; pts++) {
-                if (s.pts[pts].dying || !canvas.pointInRect(
-                      {x: s.pts[pts].xx, y: s.pts[pts].yy}, bot.sectorBox)) continue;
+                if (s.pts[pts].dying || !part.isInBox(s, pts)) continue;
 
-                    scPoint.xx = s.pts[pts].xx;
-                    scPoint.yy = s.pts[pts].yy;
+                scPoint.xx = s.pts[pts].xx;
+                scPoint.yy = s.pts[pts].yy;
 
-                    bot.injectDistance2(scPoint);
-                    wuss.addCollisionAngle(scPoint);
+                bot.injectDistance2(scPoint);
+                wuss.addCollisionAngle(scPoint);
 
-                    if (window.visualDebugging > 2) {
-                        pencil.drawCircle(canvas.circle(
-                                scPoint.xx,
-                                scPoint.yy,
-                                scPoint.radius),
-                            '#00FF00', false);
+                if (window.visualDebugging > 2) {
+                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
+                        'yellow', false);
+                }
+
+                if (scPoint.distance <= Math.pow((5 * bot.snakeRadius) + scPoint.radius, 2)) {
+                    wuss.collisionPoints.push(scPoint);
+                    if (window.visualDebugging > 1) {
+                        pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
+                            'red', false);
                     }
-
-                    if (scPoint.distance <= Math.pow(
-                            (5 * bot.snakeRadius) +
-                            scPoint.radius, 2)) {
-                        wuss.collisionPoints.push(scPoint);
-                        if (window.visualDebugging > 1) {
-                            pencil.drawCircle(canvas.circle(
-                                scPoint.xx,
-                                scPoint.yy,
-                                scPoint.radius
-                            ), 'red', false);
-                        }
-                    }
-
+                }
             }
         }
     };
@@ -327,12 +326,6 @@ var bot = window.bot = (function(window) {
             bot.sin = Math.sin(window.snake.ang);
             bot.xx = window.snake.xx + window.snake.fx;
             bot.yy = window.snake.yy + window.snake.fy;
-
-            bot.sectorBoxSide = Math.floor(Math.sqrt(window.sectors.length)) * window.sector_size;
-            bot.sectorBox = canvas.rect(
-                bot.xx - (bot.sectorBoxSide / 2),
-                bot.yy - (bot.sectorBoxSide / 2),
-                bot.sectorBoxSide, bot.sectorBoxSide);
 
             bot.speedMult = window.snake.sp / 5.78; //bot.opt.speedBase;
             bot.snakeWidth = bot.getSnakeWidth();
