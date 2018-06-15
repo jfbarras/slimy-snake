@@ -94,6 +94,54 @@ var head = window.head = (function(window) {
                     pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
                         'yellow', false);
                 }
+
+                part.seeParts(snake);
+            }
+        }
+    };
+})(window);
+
+// Sees snake heads.
+var part = window.part = (function(window) {
+    return {
+        isInBox: function(s, pts) {
+            var sectorSide = Math.floor(Math.sqrt(window.sectors.length)) * window.sector_size;
+            var sectorBox = canvas.rect(
+                bot.xx - (sectorSide / 2),
+                bot.yy - (sectorSide / 2),
+                sectorSide, sectorSide);
+            return canvas.pointInRect({x: s.pts[pts].xx, y: s.pts[pts].yy}, sectorBox);
+        },
+
+        seeParts: function(snake) {
+            var s = window.snakes[snake];
+            var snakeRadius = bot.getSnakeWidth(s.sc) / 2;
+            var scPoint = {
+                snake: snake,
+                radius: (snakeRadius + bot.snakeWidth * 1.5),
+                type: 'part'
+            };
+            for (var pts = 0, lp = s.pts.length; pts < lp; pts++) {
+                if (s.pts[pts].dying || !part.isInBox(s, pts)) continue;
+
+                scPoint.xx = s.pts[pts].xx;
+                scPoint.yy = s.pts[pts].yy;
+
+                bot.injectDistance2(scPoint);
+                wuss.addCollisionAngle(scPoint);
+
+                if (window.visualDebugging > 2) {
+                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
+                        'yellow', false);
+                }
+
+                if (scPoint.distance <= Math.pow((5 * bot.snakeRadius) + scPoint.radius, 2)) {
+                    wuss.collisionPoints.push(scPoint);
+                    if (window.visualDebugging > 1) {
+                        pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.radius),
+                            'red', false);
+                    }
+                }
             }
         }
     };

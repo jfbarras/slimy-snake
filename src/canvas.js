@@ -40,6 +40,17 @@ var canvas = window.canvas = (function(window) {
             );
         },
 
+        // Constructs a rectangle.
+        rect: function(x, y, w, h) {
+            var r = {
+                x: Math.round(x),
+                y: Math.round(y),
+                width: Math.round(w),
+                height: Math.round(h)
+            };
+            return r;
+        },
+
         // Constructs a circle.
         circle: function(x, y, r) {
             var c = {
@@ -96,6 +107,12 @@ var canvas = window.canvas = (function(window) {
         getDistance2: function(x1, y1, x2, y2) {
             var distance2 = Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
             return distance2;
+        },
+
+        // Checks if a point is inside a rectangle.
+        pointInRect: function(point, rect) {
+            return (rect.x <= point.x && rect.y <= point.y &&
+                rect.x + rect.width >= point.x && rect.y + rect.height >= point.y);
         }
     };
 })(window);
