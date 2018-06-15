@@ -6,6 +6,7 @@ window.log = function() {
     }
 };
 
+// Helps with geometry, coordinate convertion, etc.
 var canvas = window.canvas = (function(window) {
     return {
         // Converts Map coordinates to Mouse coordinates.

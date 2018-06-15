@@ -8,7 +8,7 @@ The MIT License (MIT)
 // ==UserScript==
 // @name         Slither.io Snake Whisperer
 // @namespace    https://github.com/jfbarras/slimy-snake
-// @version      0.21.0
+// @version      0.24.0
 // @description  Slither.io Snake Whisperer
 // @author       J.-F. Barras
 // @match        http://slither.io/
@@ -50,6 +50,6 @@ The MIT License (MIT)
     // Tracks FPS.
     setInterval(userInterface.framesPerSecond.fpsTimer, 80);
 
-    // Start!
+    // Starts mod.
     userInterface.oefTimer();
 })(window, document);

@@ -41,12 +41,12 @@ Visual debugging, like food collection sector, can be changed with **Y**.
 
 You can conserve resources (and therefore run more bots) by enabling "no graphics mode". This is toggled with **G**.
 
-Bot detects the outer wall. It also detects current and predicted snake head position.
+Bot modules detect: 1. the outer wall, 2. actual and predicted enemy snake head positions, and 3. enemy body parts.
 
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
 
-Four levels of visual debugging are planned: off, low, med, high.
+Four levels of visual debugging (off, low, med, high) are used to display information about the playing field.
 
 Numeric pad changes absolute heading. For example, **6** makes the snake go east.
 
@@ -72,7 +72,7 @@ Space | Speed boost
 &nbsp; | numpad | &nbsp;
 -------|--------|--------
 northwest	| north | northeast
-west | . | east
+west | &nbsp; | east
 southwest | south | southeast
 
 Mouse | Result

@@ -69,7 +69,7 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.overlays.statsOverlay = statsOverlay;
         },
 
-        // Spread 'overlay visibility property' to all overlays.
+        // Spreads 'overlay visibility property' to all overlays.
         spreadOverlayVis: function() {
             Object.keys(userInterface.overlays).forEach(function(okey) {
                 var oVis = userInterface.hiddenOverlays ? 'hidden' : 'visible';
@@ -78,6 +78,7 @@ var userInterface = window.userInterface = (function(window, document) {
             });
         },
 
+        // Swaps the regular graphics with a black rectangle.
         toggleGfx: function() {
             if (userInterface.gfxEnabled) {
                 var c = window.mc.getContext('2d');
@@ -221,7 +222,7 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.onPrefChange();
         },
 
-        // Updates the stats overlay.
+        // Updates the stats overlay. Done when snake is dying.
         updateStats: function() {
             var oContent = [];
             var median;
@@ -245,6 +246,7 @@ var userInterface = window.userInterface = (function(window, document) {
             userInterface.overlays.statsOverlay.innerHTML = oContent.join('<br/>');
         },
 
+        // Updates the pref overlay. Done on key press.
         onPrefChange: function() {
             var oContent = [];
             var ht = userInterface.twoClassTC;
@@ -275,6 +277,7 @@ var userInterface = window.userInterface = (function(window, document) {
             }
         },
 
+        // Returns the ascii arrow corresponding to a given angle.
         getArrow: function(ang) {
             const ARROWS = '→↘↓↙←↖↑↗';
             if (ang < 0) ang += Math.PI * 2;
@@ -282,6 +285,7 @@ var userInterface = window.userInterface = (function(window, document) {
             return ARROWS.charAt(idx);
         },
 
+        // Updates the bot overlay. Done every frame.
         onFrameUpdate: function() {
             if (!bot.isAlive()) return;
             let oContent = [];
@@ -314,6 +318,7 @@ var userInterface = window.userInterface = (function(window, document) {
             }
         },
 
+        // Loops.
         oefTimer: function() {
             var start = Date.now();
             canvas.maintainZoom();

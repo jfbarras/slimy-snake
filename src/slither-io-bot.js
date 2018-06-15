@@ -101,7 +101,7 @@ var head = window.head = (function(window) {
     };
 })(window);
 
-// Sees snake heads.
+// Sees snake parts.
 var part = window.part = (function(window) {
     return {
         isInBox: function(s, pts) {
@@ -198,7 +198,7 @@ var wall = window.wall = (function(window) {
     };
 })(window);
 
-// Sees
+// Sees obstacles.
 var wuss = window.wuss = (function(window) {
     return {
         collisionPoints: [],
@@ -228,7 +228,7 @@ var wuss = window.wuss = (function(window) {
             }
         },
 
-        // Sees
+        // Sees obstacles.
         scan: function() {
             wuss.collisionPoints = [];
             wuss.collisionAngles = [];
@@ -253,6 +253,7 @@ var wuss = window.wuss = (function(window) {
     };
 })(window);
 
+// Assembles robot modules.
 var bot = window.bot = (function(window) {
     return {
         ARCSIZE: Math.PI / 8,
