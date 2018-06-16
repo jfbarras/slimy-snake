@@ -167,8 +167,8 @@ var wall = window.wall = (function(window) {
             // distance from the wall at which you start seeing it
             distance: 1000,
             // number of wall segments modelled; expects odd number
-            segments: 5,
-            // how close the wall segments are modelled, in radians
+            segments: 7,
+            // how close together the wall segments are modelled, in radians
             arc: 0.004363
         },
         MID_X: 0,
@@ -239,7 +239,7 @@ var wuss = window.wuss = (function(window) {
             return wuss.cap(j + base);
         },
 
-        // Changes heading to the closest-largest angle with no collision.
+        // Finds the best (largest + closest) angle with no collision.
         bestUndefAngle: function() {
             var undefAngles = [];
             for (var a = 0; a < bot.MAXARC; a++) {
@@ -263,19 +263,17 @@ var wuss = window.wuss = (function(window) {
             }
             var best = {
                 size: 0,
-                idx: undefined
+                ang: undefined
             };
             for (var p = 0; p < undefAngles.length; p++) {
                 if (undefAngles[p].sz > best.size) {
                     best = {
                         size: undefAngles[p].sz,
-                        idx: undefAngles[p].idx
+                        ang: undefAngles[p].idx * bot.opt.arcSize
                     };
                 }
             }
-            if (best.idx !== undefined) {
-                actuator.changeHeadingAbs(best.idx * bot.opt.arcSize);
-            }
+            return best;
         },
 
         // Adds to the collisionAngles array, if distance is closer.
@@ -308,7 +306,10 @@ var wuss = window.wuss = (function(window) {
             wuss.collisionAngles = [];
             head.seeHeads();
             wall.seeWall();
-            wuss.bestUndefAngle();
+            var best = wuss.bestUndefAngle();
+            if (best.ang !== undefined) {
+                actuator.changeHeadingAbs(best.ang);
+            }
             wuss.collisionPoints.sort(bot.sortDistance);
             if (window.visualDebugging > 1) {
                 for (var i = 0; i < wuss.collisionAngles.length; i++) {
