@@ -218,6 +218,66 @@ var wuss = window.wuss = (function(window) {
         collisionPoints: [],
         collisionAngles: [],
 
+        cap: function(j, max) {
+            if (max === undefined) max = bot.MAXARC;
+            if (j >= max) j -= max;
+            if (j < 0) j += max;
+            return j;
+        },
+
+        // 0 to 7 --> 0,1,7,2,6,3,5,4
+        oscillate: function(i, base, max) {
+            if (base === undefined) base = bot.getAngleIndex(window.snake.ehang);
+            if (max === undefined) max = bot.MAXARC;
+            if (i === 0) {
+                j = 0;
+            } else if (i % 2) {
+                j = (i + 1) / 2;
+            } else {
+                j = (i / -2) + max;
+            }
+            return wuss.cap(j + base);
+        },
+
+        // Changes heading to the closest-largest angle with no collision.
+        bestUndefAngle: function() {
+            var undefAngles = [];
+            for (var a = 0; a < bot.MAXARC; a++) {
+                var i = wuss.oscillate(a);
+                if (wuss.collisionAngles[i] !== undefined) continue;
+                var sz = 1;
+                var left = wuss.cap(i-1);
+                while (wuss.collisionAngles[left] === undefined && left !== i) {
+                    sz++;
+                    left = wuss.cap(left-1);
+                }
+                var right = wuss.cap(i+1);
+                while (wuss.collisionAngles[right] === undefined && right !== i) {
+                    sz++;
+                    right = wuss.cap(right+1);
+                }
+                undefAngles.push({
+                    idx: i,
+                    sz: sz
+                });
+            }
+            var best = {
+                size: 0,
+                idx: undefined
+            };
+            for (var p = 0; p < undefAngles.length; p++) {
+                if (undefAngles[p].sz > best.size) {
+                    best = {
+                        size: undefAngles[p].sz,
+                        idx: undefAngles[p].idx
+                    };
+                }
+            }
+            if (best.idx !== undefined) {
+                actuator.changeHeadingAbs(best.idx * bot.opt.arcSize);
+            }
+        },
+
         // Adds to the collisionAngles array, if distance is closer.
         addCollisionAngle: function(sp) {
             var ang = canvas.fastAtan2(
@@ -248,6 +308,7 @@ var wuss = window.wuss = (function(window) {
             wuss.collisionAngles = [];
             head.seeHeads();
             wall.seeWall();
+            wuss.bestUndefAngle();
             wuss.collisionPoints.sort(bot.sortDistance);
             if (window.visualDebugging > 1) {
                 for (var i = 0; i < wuss.collisionAngles.length; i++) {
