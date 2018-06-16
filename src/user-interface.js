@@ -349,9 +349,8 @@ var userInterface = window.userInterface = (function(window, document) {
             if (!window.no_raf) {
                 window.raf(userInterface.oefTimer);
             } else {
-                const bot_opt_targetFps = 60;
                 setTimeout(userInterface.oefTimer,
-                    (1000 / bot_opt_targetFps) - (Date.now() - start));
+                    (1000 / bot.opt.targetFps) - (Date.now() - start));
             }
         },
 

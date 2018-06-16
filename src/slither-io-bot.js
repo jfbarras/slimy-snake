@@ -48,8 +48,8 @@ var actuator = window.actuator = (function(window) {
 var head = window.head = (function(window) {
     return {
         opt: {
-            // prediction multiplier. applied on radius x speed
-            prediMult: 2.5,
+            // radius x speed multiplier
+            mult: 10,
         },
 
         seeHeads: function() {
@@ -63,7 +63,7 @@ var head = window.head = (function(window) {
                 var s = window.snakes[snake];
                 var snakeRadius = bot.getSnakeWidth(s.sc) / 2;
                 var sSpMult = Math.min(1, s.sp / 5.78 - 0.2);
-                var sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.prediMult;
+                var sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.mult / 4;
 
                 scPoint = {
                     xx: s.xx + Math.cos(s.ehang) * sRadius * 0.75,
@@ -84,7 +84,6 @@ var head = window.head = (function(window) {
 
                 scPoint.xx = s.xx;
                 scPoint.yy = s.yy;
-                scPoint.radius = 3 * snakeRadius;
 
                 bot.injectDistance2(scPoint);
                 wuss.addCollisionAngle(scPoint);
@@ -104,6 +103,11 @@ var head = window.head = (function(window) {
 // Sees snake parts.
 var part = window.part = (function(window) {
     return {
+        opt: {
+            // radius multiplier
+            mult: 10,
+        },
+
         isInBox: function(s, pts) {
             var sectorSide = Math.floor(Math.sqrt(window.sectors.length)) * window.sector_size;
             var sectorBox = canvas.rect(
@@ -118,7 +122,7 @@ var part = window.part = (function(window) {
             var snakeRadius = bot.getSnakeWidth(s.sc) / 2;
             var scPoint = {
                 snake: snake,
-                radius: (snakeRadius + bot.snakeWidth * 1.5),
+                radius: (snakeRadius + bot.snakeWidth * 1.5) * part.opt.mult / 10,
                 type: 'part'
             };
             for (var pts = 0, lp = s.pts.length; pts < lp; pts++) {
@@ -164,7 +168,7 @@ var wall = window.wall = (function(window) {
         MIN_D: 0,
 
         isWallClose: function() {
-            if (wall.MID_X === 0) {
+            if (wall.MID_X !== window.grd) {
                 wall.MID_X = window.grd;
                 wall.MID_Y = window.grd;
                 wall.MAP_R = window.grd * 0.98;
@@ -256,8 +260,14 @@ var wuss = window.wuss = (function(window) {
 // Assembles robot modules.
 var bot = window.bot = (function(window) {
     return {
-        ARCSIZE: Math.PI / 8,
-        MAXARC: (2 * Math.PI) / (Math.PI / 8),
+        opt: {
+            // how long the main loop tries to be
+            targetFps: 60,
+            // size of arc between collision angles
+            arcSize: Math.PI / 8,
+            // snake speed when small and not boosting
+            speedBase: 5.78
+        },
         state: 'init',
         scores: [],
 
@@ -325,10 +335,11 @@ var bot = window.bot = (function(window) {
         every: function() {
             bot.cos = Math.cos(window.snake.ang);
             bot.sin = Math.sin(window.snake.ang);
+            bot.MAXARC = (2 * Math.PI) / bot.opt.arcSize;
             bot.xx = window.snake.xx + window.snake.fx;
             bot.yy = window.snake.yy + window.snake.fy;
 
-            bot.speedMult = window.snake.sp / 5.78; //bot.opt.speedBase;
+            bot.speedMult = window.snake.sp / bot.opt.speedBase;
             bot.snakeWidth = bot.getSnakeWidth();
             bot.snakeRadius = bot.snakeWidth / 2;
             bot.snakeLength = bot.getSnakeLength();
