@@ -218,27 +218,6 @@ var wuss = window.wuss = (function(window) {
         collisionPoints: [],
         collisionAngles: [],
 
-        cap: function(j, max) {
-            if (max === undefined) max = bot.MAXARC;
-            if (j >= max) j -= max;
-            if (j < 0) j += max;
-            return j;
-        },
-
-        // 0 to 7 --> 0,1,7,2,6,3,5,4
-        oscillate: function(i, base, max) {
-            if (base === undefined) base = bot.getAngleIndex(window.snake.ehang);
-            if (max === undefined) max = bot.MAXARC;
-            if (i === 0) {
-                j = 0;
-            } else if (i % 2) {
-                j = (i + 1) / 2;
-            } else {
-                j = (i / -2) + max;
-            }
-            return wuss.cap(j + base);
-        },
-
         // Adds to the collisionAngles array, if distance is closer.
         addCollisionAngle: function(sp) {
             var ang = canvas.fastAtan2(
