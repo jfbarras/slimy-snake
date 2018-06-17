@@ -239,43 +239,6 @@ var wuss = window.wuss = (function(window) {
             return wuss.cap(j + base);
         },
 
-        // Finds the best (largest + closest) angle with no collision.
-        bestUndefAngle: function() {
-            var undefAngles = [];
-            for (var a = 0; a < bot.MAXARC; a++) {
-                var i = wuss.oscillate(a);
-                if (wuss.collisionAngles[i] !== undefined) continue;
-                var sz = 1;
-                var left = wuss.cap(i-1);
-                while (wuss.collisionAngles[left] === undefined && left !== i) {
-                    sz++;
-                    left = wuss.cap(left-1);
-                }
-                var right = wuss.cap(i+1);
-                while (wuss.collisionAngles[right] === undefined && right !== i) {
-                    sz++;
-                    right = wuss.cap(right+1);
-                }
-                undefAngles.push({
-                    idx: i,
-                    sz: sz
-                });
-            }
-            var best = {
-                size: 0,
-                ang: undefined
-            };
-            for (var p = 0; p < undefAngles.length; p++) {
-                if (undefAngles[p].sz > best.size) {
-                    best = {
-                        size: undefAngles[p].sz,
-                        ang: undefAngles[p].idx * bot.opt.arcSize
-                    };
-                }
-            }
-            return best;
-        },
-
         // Adds to the collisionAngles array, if distance is closer.
         addCollisionAngle: function(sp) {
             var ang = canvas.fastAtan2(
@@ -306,10 +269,6 @@ var wuss = window.wuss = (function(window) {
             wuss.collisionAngles = [];
             head.seeHeads();
             wall.seeWall();
-            var best = wuss.bestUndefAngle();
-            if (best.ang !== undefined) {
-                actuator.changeHeadingAbs(best.ang);
-            }
             wuss.collisionPoints.sort(bot.sortDistance);
             if (window.visualDebugging > 1) {
                 for (var i = 0; i < wuss.collisionAngles.length; i++) {
