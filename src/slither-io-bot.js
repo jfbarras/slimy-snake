@@ -220,28 +220,32 @@ var wuss = window.wuss = (function(window) {
 
         // Finds the collision angles, on left and right, of a start angle.
         fanOut: function(start) {
-            var i = 0;
-            var j;
-            var left;
+            var left = {
+                arcIdx: 0,
+                colIdx: undefined,
+                angObj: undefined
+            };
             do {
-                j = (start + i) % bot.MAXARC;
-                left = wuss.collisionAngles[j];
-                i++;
+                left.colIdx = (start + left.arcIdx) % bot.MAXARC;
+                left.angObj = wuss.collisionAngles[left.colIdx];
+                left.arcIdx++;
             }
-            while (i < bot.MAXARC && left === undefined);
+            while (left.arcIdx < bot.MAXARC && left.angObj === undefined);
 
-            var p = 0;
-            var q;
-            var right;
+            var right = {
+                arcIdx: 0,
+                colIdx: undefined,
+                angObj: undefined
+            };
             do {
-                q = start - p; if (q < 0) q += bot.MAXARC;
-                right = wuss.collisionAngles[q];
-                p++;
+                right.colIdx = start - right.arcIdx; if (right.colIdx < 0) right.colIdx += bot.MAXARC;
+                right.angObj = wuss.collisionAngles[right.colIdx];
+                right.arcIdx++;
             }
-            while (p < bot.MAXARC && right === undefined);
+            while (right.arcIdx < bot.MAXARC && right.angObj === undefined);
 
             return {
-                size: i + p,
+                size: left.arcIdx + right.arcIdx,
                 idx: start
             };
         },
