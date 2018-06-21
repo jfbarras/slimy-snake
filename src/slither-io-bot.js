@@ -245,8 +245,8 @@ var wuss = window.wuss = (function(window) {
             while (right.arcIdx < bot.MAXARC && right.angObj === undefined);
 
             return {
-                size: left.arcIdx + right.arcIdx,
-                idx: start
+                left: left.arcIdx - 1,
+                right: right.arcIdx - 1
             };
         },
 
@@ -266,7 +266,7 @@ var wuss = window.wuss = (function(window) {
         },
 
         // Finds the best (largest + closest) angle with no collision.
-        bestAngle: function() {
+        bestUndefAngle: function() {
             var best = {
                 size: 0,
                 idx: undefined
@@ -274,11 +274,13 @@ var wuss = window.wuss = (function(window) {
             for (var a = 0; a < bot.MAXARC; a++) {
                 var i = wuss.oscillate(a);
                 var fan = wuss.fanOut(i);
-                if (fan.size > best.size) {
-                    best.size = fan.size;
-                    best.idx = fan.idx;
+                var middle = (fan.left + fan.right) / 2;
+                var penalty = Math.abs(middle - fan.left) + Math.abs(middle - fan.right);
+                var size = fan.left + fan.right - (penalty / 100);
+                if (size > best.size) {
+                    best.size = size;
+                    best.idx = i;
                 }
-
             }
             if (best.idx !== undefined) return best.idx * bot.opt.arcSize;
             return undefined;
@@ -314,7 +316,7 @@ var wuss = window.wuss = (function(window) {
             wuss.collisionAngles = [];
             head.seeHeads();
             wall.seeWall();
-            var best = wuss.bestAngle();
+            var best = wuss.bestUndefAngle();
             if (best !== undefined)
                 actuator.changeHeadingAbs(best);
             wuss.collisionPoints.sort(bot.sortDistance);
