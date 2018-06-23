@@ -282,8 +282,20 @@ var wuss = window.wuss = (function(window) {
                     best.idx = i;
                 }
             }
-            if (best.idx !== undefined) return best.idx * bot.opt.arcSize;
-            return undefined;
+            if (best.idx !== undefined) {
+                var ang = best.idx * bot.opt.arcSize;
+                if (window.visualDebugging > 1) {
+                    pencil.drawLine({
+                            x: bot.xx,
+                            y: bot.yy
+                        }, {
+                            x: bot.xx + 1000 * Math.cos(ang),
+                            y: bot.yy + 1000 * Math.sin(ang)
+                        },
+                        'lime', 2);
+                }
+                return ang;
+            }
         },
 
         // Adds to the collisionAngles array, if distance is closer.
@@ -316,10 +328,9 @@ var wuss = window.wuss = (function(window) {
             wuss.collisionAngles = [];
             head.seeHeads();
             wall.seeWall();
-            var best = wuss.bestUndefAngle();
-            if (best !== undefined)
-                actuator.changeHeadingAbs(best);
+            wuss.bestUndefAngle();
             wuss.collisionPoints.sort(bot.sortDistance);
+
             if (window.visualDebugging > 1) {
                 for (var i = 0; i < wuss.collisionAngles.length; i++) {
                     if (wuss.collisionAngles[i] !== undefined) {
@@ -330,7 +341,7 @@ var wuss = window.wuss = (function(window) {
                                 x: wuss.collisionAngles[i].x,
                                 y: wuss.collisionAngles[i].y
                             },
-                            'gray', 2);
+                            '#251d11', 2);
                     }
                 }
             }
