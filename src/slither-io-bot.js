@@ -218,6 +218,86 @@ var wuss = window.wuss = (function(window) {
         collisionPoints: [],
         collisionAngles: [],
 
+        // Finds the collision angles, on left and right, of a start angle.
+        fanOut: function(start) {
+            var left = {
+                arcIdx: 0,
+                colIdx: undefined,
+                angObj: undefined
+            };
+            do {
+                left.colIdx = (start + left.arcIdx) % bot.MAXARC;
+                left.angObj = wuss.collisionAngles[left.colIdx];
+                left.arcIdx++;
+            }
+            while (left.arcIdx < bot.MAXARC && left.angObj === undefined);
+
+            var right = {
+                arcIdx: 0,
+                colIdx: undefined,
+                angObj: undefined
+            };
+            do {
+                right.colIdx = start - right.arcIdx; if (right.colIdx < 0) right.colIdx += bot.MAXARC;
+                right.angObj = wuss.collisionAngles[right.colIdx];
+                right.arcIdx++;
+            }
+            while (right.arcIdx < bot.MAXARC && right.angObj === undefined);
+
+            return {
+                left: left.arcIdx - 1,
+                right: right.arcIdx - 1
+            };
+        },
+
+        // 0 to 7 --> 0,1,7,2,6,3,5,4
+        oscillate: function(i, base, max) {
+            if (base === undefined) base = bot.getAngleIndex(window.snake.ehang);
+            if (max === undefined) max = bot.MAXARC;
+            var j;
+            if (i === 0) {
+                j = 0;
+            } else if (i % 2) {
+                j = (i + 1) / 2;
+            } else {
+                j = (i / -2) + max;
+            }
+            return (base + j) % max;
+        },
+
+        // Finds the best (largest + closest) angle with no collision.
+        bestUndefAngle: function() {
+            var best = {
+                size: 0,
+                idx: undefined
+            };
+            for (var a = 0; a < bot.MAXARC; a++) {
+                var i = wuss.oscillate(a);
+                var fan = wuss.fanOut(i);
+                var middle = (fan.left + fan.right) / 2;
+                var penalty = Math.abs(middle - fan.left) + Math.abs(middle - fan.right);
+                var size = fan.left + fan.right - (penalty / 100);
+                if (size > best.size) {
+                    best.size = size;
+                    best.idx = i;
+                }
+            }
+            if (best.idx !== undefined) {
+                var ang = best.idx * bot.opt.arcSize;
+                if (window.visualDebugging > 1) {
+                    pencil.drawLine({
+                            x: bot.xx,
+                            y: bot.yy
+                        }, {
+                            x: bot.xx + 1000 * Math.cos(ang),
+                            y: bot.yy + 1000 * Math.sin(ang)
+                        },
+                        'lime', 2);
+                }
+                return ang;
+            }
+        },
+
         // Adds to the collisionAngles array, if distance is closer.
         addCollisionAngle: function(sp) {
             var ang = canvas.fastAtan2(
@@ -248,7 +328,9 @@ var wuss = window.wuss = (function(window) {
             wuss.collisionAngles = [];
             head.seeHeads();
             wall.seeWall();
+            wuss.bestUndefAngle();
             wuss.collisionPoints.sort(bot.sortDistance);
+
             if (window.visualDebugging > 1) {
                 for (var i = 0; i < wuss.collisionAngles.length; i++) {
                     if (wuss.collisionAngles[i] !== undefined) {
@@ -259,7 +341,7 @@ var wuss = window.wuss = (function(window) {
                                 x: wuss.collisionAngles[i].x,
                                 y: wuss.collisionAngles[i].y
                             },
-                            'gray', 2);
+                            '#251d11', 2);
                     }
                 }
             }
