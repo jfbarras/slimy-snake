@@ -1,4 +1,6 @@
 
+/* jshint esversion: 6 */
+
 var actuator = window.actuator = (function(window) {
     return {
         // Spoofs moving the mouse to the provided coordinates.
@@ -9,8 +11,8 @@ var actuator = window.actuator = (function(window) {
 
         // Changes heading to ang.
         changeHeadingAbs: function(angle) {
-            var cos = Math.cos(angle);
-            var sin = Math.sin(angle);
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
 
             window.goalCoordinates = {
                 x: Math.round(bot.xx + 3 * bot.snakeRadius * cos),
@@ -22,13 +24,13 @@ var actuator = window.actuator = (function(window) {
 
         // Changes heading by ang.
         changeHeadingRel: function(angle) {
-            var heading = {
+            const heading = {
                 x: bot.xx + 3 * bot.snakeRadius * bot.cos,
                 y: bot.yy + 3 * bot.snakeRadius * bot.sin
             };
 
-            var cos = Math.cos(-angle);
-            var sin = Math.sin(-angle);
+            const cos = Math.cos(-angle);
+            const sin = Math.sin(-angle);
 
             window.goalCoordinates = {
                 x: Math.round(
@@ -54,16 +56,16 @@ var head = window.head = (function(window) {
 
         seeHeads: function() {
             var scPoint;
-            for (var snake = 0, ls = window.snakes.length; snake < ls; snake++) {
+            for (let snake = 0, ls = window.snakes.length; snake < ls; snake++) {
                 scPoint = undefined;
 
                 if (window.snakes[snake].id === window.snake.id ||
                     window.snakes[snake].alive_amt !== 1) continue;
 
-                var s = window.snakes[snake];
-                var snakeRadius = bot.getSnakeWidth(s.sc) / 2;
-                var sSpMult = Math.min(1, s.sp / 5.78 - 0.2);
-                var sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.mult / 4;
+                const s = window.snakes[snake];
+                const snakeRadius = bot.getSnakeWidth(s.sc) / 2;
+                const sSpMult = Math.min(1, s.sp / 5.78 - 0.2);
+                const sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.mult / 4;
 
                 scPoint = {
                     xx: s.xx + Math.cos(s.ehang) * sRadius * 0.75,
@@ -116,8 +118,8 @@ var part = window.part = (function(window) {
         },
 
         isInBox: function(s, pts) {
-            var sectorSide = Math.floor(Math.sqrt(window.sectors.length)) * window.sector_size;
-            var sectorBox = canvas.rect(
+            const sectorSide = Math.floor(Math.sqrt(window.sectors.length)) * window.sector_size;
+            const sectorBox = canvas.rect(
                 bot.xx - (sectorSide / 2),
                 bot.yy - (sectorSide / 2),
                 sectorSide, sectorSide);
@@ -125,16 +127,16 @@ var part = window.part = (function(window) {
         },
 
         seeParts: function(snake) {
-            var s = window.snakes[snake];
-            var snakeRadius = bot.getSnakeWidth(s.sc) / 2;
+            const s = window.snakes[snake];
+            const snakeRadius = bot.getSnakeWidth(s.sc) / 2;
+            const k = Math.ceil(snakeRadius / 15);
             var scPoint = {
                 snake: snake,
                 hardBody: snakeRadius,
                 bubble: (snakeRadius + bot.snakeWidth * 1.5) * part.opt.mult / 10,
                 type: 'part'
             };
-            var k = Math.ceil(snakeRadius/15);
-            for (var pts = 0, lp = s.pts.length; pts < lp; pts += k) {
+            for (let pts = 0, lp = s.pts.length; pts < lp; pts += k) {
                 if (s.pts[pts].dying || !part.isInBox(s, pts)) continue;
 
                 scPoint.xx = s.pts[pts].xx;
@@ -183,23 +185,23 @@ var wall = window.wall = (function(window) {
                 wall.MAP_R = window.grd * 0.98;
                 wall.MIN_D = Math.pow(wall.MAP_R - wall.opt.distance, 2);
             }
-            var dist = canvas.getDistance2(wall.MID_X, wall.MID_Y, bot.xx, bot.yy);
+            const dist = canvas.getDistance2(wall.MID_X, wall.MID_Y, bot.xx, bot.yy);
             return (dist > wall.MIN_D);
         },
 
         seeWall: function() {
             if (!wall.isWallClose()) return;
-            var midAng = canvas.fastAtan2(bot.yy - wall.MID_X, bot.xx - wall.MID_Y);
-            var j = (wall.opt.segments - 1) / 2;
-            for (var i = -j; i <= j; i++) {
-                var scPoint = {
-                    xx: wall.MID_X + wall.MAP_R * Math.cos(midAng + i * wall.opt.arc),
-                    yy: wall.MID_Y + wall.MAP_R * Math.sin(midAng + i * wall.opt.arc),
-                    snake: -1,
-                    hardBody: 1,
-                    bubble: bot.snakeWidth * 1.5,
-                    type: 'wall'
-                };
+            const midAng = canvas.fastAtan2(bot.yy - wall.MID_X, bot.xx - wall.MID_Y);
+            const j = (wall.opt.segments - 1) / 2;
+            var scPoint = {
+                snake: -1,
+                hardBody: 1,
+                bubble: bot.snakeWidth * 1.5,
+                type: 'wall'
+            };
+            for (let i = -j; i <= j; i++) {
+                scPoint.xx = wall.MID_X + wall.MAP_R * Math.cos(midAng + i * wall.opt.arc);
+                scPoint.yy = wall.MID_Y + wall.MAP_R * Math.sin(midAng + i * wall.opt.arc);
                 bot.injectDistance2(scPoint);
                 wuss.collisionPoints.push(scPoint);
                 wuss.addCollisionAngle(scPoint);
@@ -238,7 +240,8 @@ var wuss = window.wuss = (function(window) {
                 angObj: undefined
             };
             do {
-                right.colIdx = start - right.arcIdx; if (right.colIdx < 0) right.colIdx += bot.MAXARC;
+                right.colIdx = start - right.arcIdx;
+                if (right.colIdx < 0) right.colIdx += bot.MAXARC;
                 right.angObj = wuss.collisionAngles[right.colIdx];
                 right.arcIdx++;
             }
@@ -271,20 +274,20 @@ var wuss = window.wuss = (function(window) {
                 size: 0,
                 idx: undefined
             };
-            for (var a = 0; a < bot.MAXARC; a++) {
-                var i = wuss.oscillate(a);
-                var fan = wuss.fanOut(i);
-                var middle = (fan.left + fan.right) / 2;
-                var penalty = Math.abs(middle - fan.left) + Math.abs(middle - fan.right);
-                var size = fan.left + fan.right - (penalty / 100);
+            for (let a = 0; a < bot.MAXARC; a++) {
+                const i = wuss.oscillate(a);
+                const fan = wuss.fanOut(i);
+                const middle = (fan.left + fan.right) / 2;
+                const penalty = Math.abs(middle - fan.left) + Math.abs(middle - fan.right);
+                const size = fan.left + fan.right - (penalty / 100);
                 if (size > best.size) {
                     best.size = size;
                     best.idx = i;
                 }
             }
             if (best.idx !== undefined) {
-                var ang = best.idx * bot.opt.arcSize;
-                if (window.visualDebugging > 1) {
+                const ang = best.idx * bot.opt.arcSize;
+                if (window.visualDebugging > 0) {
                     pencil.drawLine({
                             x: bot.xx,
                             y: bot.yy
@@ -300,12 +303,12 @@ var wuss = window.wuss = (function(window) {
 
         // Adds to the collisionAngles array, if distance is closer.
         addCollisionAngle: function(sp) {
-            var ang = canvas.fastAtan2(
+            const ang = canvas.fastAtan2(
                 Math.round(sp.yy - bot.yy),
                 Math.round(sp.xx - bot.xx));
-            var aIndex = bot.getAngleIndex(ang);
+            const aIndex = bot.getAngleIndex(ang);
 
-            var actualDistance = Math.round(Math.pow(
+            const actualDistance = Math.round(Math.pow(
                 Math.sqrt(sp.distance) - sp.bubble, 2));
 
             if (wuss.collisionAngles[aIndex] === undefined ||
@@ -332,7 +335,7 @@ var wuss = window.wuss = (function(window) {
             wuss.collisionPoints.sort(bot.sortDistance);
 
             if (window.visualDebugging > 1) {
-                for (var i = 0; i < wuss.collisionAngles.length; i++) {
+                for (let i = 0; i < wuss.collisionAngles.length; i++) {
                     if (wuss.collisionAngles[i] !== undefined) {
                         pencil.drawLine({
                                 x: bot.xx,
@@ -379,8 +382,8 @@ var bot = window.bot = (function(window) {
         // @param {number} dl -- offsets length-wise
         // @param {number} rm -- radius multiplier
         getHeadCircle: function(dw, dl, rm) {
-            var s = bot.sin * bot.snakeWidth;
-            var c = bot.cos * bot.snakeWidth;
+            const s = bot.sin * bot.snakeWidth;
+            const c = bot.cos * bot.snakeWidth;
             return canvas.circle(
                 bot.xx + dl * c + s + (dw + 1) * (bot.cos - s),
                 bot.yy + dl * s - c + (dw + 1) * (bot.sin + c),
@@ -401,7 +404,6 @@ var bot = window.bot = (function(window) {
         // Gets the angle index from specified angle.
         getAngleIndex: function(angle) {
             const TP = 2 * Math.PI;
-            var index;
 
             while (angle < 0) {
                 angle += TP;
@@ -411,7 +413,7 @@ var bot = window.bot = (function(window) {
                 angle -= TP;
             }
 
-            index = Math.round(angle * (1 / (TP / bot.MAXARC)));
+            const index = Math.round(angle * (1 / (TP / bot.MAXARC)));
 
             if (index === bot.MAXARC) {
                 return 0;
