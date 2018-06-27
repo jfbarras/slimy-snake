@@ -352,6 +352,64 @@ var wuss = window.wuss = (function(window) {
     };
 })(window);
 
+// Sees food
+var glut = window.glut = (function(window) {
+    return {
+        foodAngles: [],
+
+        // Adds and scores foodAngles.
+        addFoodAngle: function(f) {
+            var ang = canvas.fastAtan2(
+                Math.round(f.yy - bot.yy),
+                Math.round(f.xx - bot.xx));
+
+            var aIndex = bot.getAngleIndex(ang);
+
+            bot.injectDistance2(f);
+            var fdistance = Math.sqrt(f.distance);
+
+            if ((f.sz > 10 || fdistance < bot.snakeWidth * 10) && (wuss.collisionAngles[aIndex] === undefined ||
+                    wuss.collisionAngles[aIndex].distance > f.distance)) {
+                if (glut.foodAngles[aIndex] === undefined) {
+                    glut.foodAngles[aIndex] = {
+                        x: Math.round(f.xx),
+                        y: Math.round(f.yy),
+                        ang: ang,
+                        da: 0, //Math.abs(bot.angleBetween(ang, window.snake.ehang)),
+                        distance: f.distance,
+                        sz: f.sz,
+                        score: f.sz / f.distance
+                    };
+                } else {
+                    glut.foodAngles[aIndex].sz += f.sz;
+                    glut.foodAngles[aIndex].score += f.sz / f.distance;
+                    if (glut.foodAngles[aIndex].distance > f.distance) {
+                        glut.foodAngles[aIndex].x = Math.round(f.xx);
+                        glut.foodAngles[aIndex].y = Math.round(f.yy);
+                        glut.foodAngles[aIndex].distance = f.distance;
+                        if (window.visualDebugging > 1) {
+                            pencil.drawCircle(canvas.circle(f.xx, f.yy, 5), 'white');
+                        }
+                    }
+                }
+            }
+        },
+
+        // Scans for food.
+        scan: function() {
+            glut.foodAngles = [];
+
+            for (var i = 0; i < window.foods.length && window.foods[i] !== null; i++) {
+                var f = window.foods[i];
+
+                if (!f.eaten) {
+                    glut.addFoodAngle(f);
+                }
+            }
+        }
+    };
+})(window);
+
 // Assembles robot modules.
 var bot = window.bot = (function(window) {
     return {
@@ -453,6 +511,7 @@ var bot = window.bot = (function(window) {
         go: function() {
             bot.every();
             wuss.scan();
+            glut.scan();
             baller.run();
         }
     };
