@@ -5,6 +5,7 @@
 - [Intro](https://github.com/jfbarras/slimy-snake#intro)
 - [Repieced features](https://github.com/jfbarras/slimy-snake#repieced-features)
 - [New features](https://github.com/jfbarras/slimy-snake#new-features)
+- [Improved features](https://github.com/jfbarras/slimy-snake#improved-features)
 - [Controls](https://github.com/jfbarras/slimy-snake#controls)
 
 ## Intro
@@ -55,6 +56,9 @@ Visual debugging includes four side circles showing the snake's turning radius.
 Width, speed and direction are shown in the bottom right overlay.
 
 Press **B** to turn snake into a ball. Use numpad +/- to increase/decrease ball size.
+
+## Improved Features
+Bot can find the best angle for avoidance: the largest sector, the closest angle, that has no collision. TODO: What about when snake is fully encircled?
 
 ## Controls
 Key | Result
