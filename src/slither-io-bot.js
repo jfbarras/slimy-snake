@@ -359,14 +359,13 @@ var glut = window.glut = (function(window) {
 
         // Adds and scores foodAngles.
         addFoodAngle: function(f) {
-            var ang = canvas.fastAtan2(
+            const ang = canvas.fastAtan2(
                 Math.round(f.yy - bot.yy),
                 Math.round(f.xx - bot.xx));
-
-            var aIndex = bot.getAngleIndex(ang);
+            const aIndex = bot.getAngleIndex(ang);
 
             bot.injectDistance2(f);
-            var fdistance = Math.sqrt(f.distance);
+            const fdistance = Math.sqrt(f.distance);
 
             if ((f.sz > 10 || fdistance < bot.snakeWidth * 10) && (wuss.collisionAngles[aIndex] === undefined ||
                     wuss.collisionAngles[aIndex].distance > f.distance)) {
@@ -375,7 +374,7 @@ var glut = window.glut = (function(window) {
                         x: Math.round(f.xx),
                         y: Math.round(f.yy),
                         ang: ang,
-                        da: 0, //Math.abs(bot.angleBetween(ang, window.snake.ehang)),
+                        da: canvas.angleBetween(ang, window.snake.ehang),
                         distance: f.distance,
                         sz: f.sz,
                         score: f.sz / f.distance
@@ -389,6 +388,14 @@ var glut = window.glut = (function(window) {
                         glut.foodAngles[aIndex].distance = f.distance;
                         if (window.visualDebugging > 1) {
                             pencil.drawCircle(canvas.circle(f.xx, f.yy, 5), 'white');
+                            pencil.drawLine({
+                                    x: bot.xx,
+                                    y: bot.yy
+                                }, {
+                                    x: bot.xx + fdistance * Math.cos(ang),
+                                    y: bot.yy + fdistance * Math.sin(ang)
+                                },
+                                'gray', 2);
                         }
                     }
                 }
