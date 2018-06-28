@@ -362,6 +362,17 @@ var glut = window.glut = (function(window) {
             const ang = canvas.fastAtan2(
                 Math.round(f.yy - bot.yy),
                 Math.round(f.xx - bot.xx));
+            const s = Math.sin(ang) * bot.snakeWidth;
+            const c = Math.cos(ang) * bot.snakeWidth;
+            const leftLip = {
+                x: bot.xx + c + s,
+                y: bot.yy + s - c,
+            };
+            const rightLip = {
+                x: bot.xx + c + s + 2 * (Math.cos(ang) - s),
+                y: bot.yy + s - c + 2 * (Math.sin(ang) + c),
+            };
+
             const aIndex = bot.getAngleIndex(ang);
 
             bot.injectDistance2(f);
@@ -389,13 +400,21 @@ var glut = window.glut = (function(window) {
                         if (window.visualDebugging > 1) {
                             pencil.drawCircle(canvas.circle(f.xx, f.yy, 5), 'white');
                             pencil.drawLine({
-                                    x: bot.xx,
-                                    y: bot.yy
+                                    x: leftLip.x,
+                                    y: leftLip.y
                                 }, {
-                                    x: bot.xx + fdistance * Math.cos(ang),
-                                    y: bot.yy + fdistance * Math.sin(ang)
+                                    x: leftLip.x + fdistance * Math.cos(ang),
+                                    y: leftLip.y + fdistance * Math.sin(ang)
                                 },
                                 'gray', 2);
+                            pencil.drawLine({
+                                    x: rightLip.x,
+                                    y: rightLip.y
+                                }, {
+                                    x: rightLip.x + fdistance * Math.cos(ang),
+                                    y: rightLip.y + fdistance * Math.sin(ang)
+                                },
+                                'blue', 2);
                         }
                     }
                 }
