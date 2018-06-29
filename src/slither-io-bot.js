@@ -357,8 +357,8 @@ var glut = window.glut = (function(window) {
     return {
         foodAngles: [],
 
-        // Adds and scores foodAngles.
-        addFoodAngle: function(f) {
+        // Checks which angle is best to get to this food.
+        getFoodAng: function(f) {
             const ang = canvas.fastAtan2(
                 Math.round(f.yy - bot.yy),
                 Math.round(f.xx - bot.xx));
@@ -372,7 +372,22 @@ var glut = window.glut = (function(window) {
                 x: bot.xx + c + s + 2 * (Math.cos(ang) - s),
                 y: bot.yy + s - c + 2 * (Math.sin(ang) + c),
             };
+            const leftAngle = canvas.fastAtan2(
+                Math.round(f.yy - leftLip.y),
+                Math.round(f.xx - leftLip.x));
+            const rightAngle = canvas.fastAtan2(
+                Math.round(f.yy - rightLip.y),
+                Math.round(f.xx - rightLip.x));
+            const leftDA = Math.abs(canvas.angleBetween(leftAngle, window.snake.ehang));
+            const rightDA = Math.abs(canvas.angleBetween(rightAngle, window.snake.ehang));
+            const useLeft = leftDA < rightDA;
 
+            return useLeft ? leftAngle : rightAngle;
+        },
+
+        // Adds and scores foodAngles.
+        addFoodAngle: function(f) {
+            const ang = glut.getFoodAng(f);
             const aIndex = bot.getAngleIndex(ang);
 
             bot.injectDistance2(f);
@@ -400,19 +415,11 @@ var glut = window.glut = (function(window) {
                         if (window.visualDebugging > 1) {
                             pencil.drawCircle(canvas.circle(f.xx, f.yy, 5), 'white');
                             pencil.drawLine({
-                                    x: leftLip.x,
-                                    y: leftLip.y
+                                    x: bot.xx,
+                                    y: bot.yy
                                 }, {
-                                    x: leftLip.x + fdistance * Math.cos(ang),
-                                    y: leftLip.y + fdistance * Math.sin(ang)
-                                },
-                                'gray', 2);
-                            pencil.drawLine({
-                                    x: rightLip.x,
-                                    y: rightLip.y
-                                }, {
-                                    x: rightLip.x + fdistance * Math.cos(ang),
-                                    y: rightLip.y + fdistance * Math.sin(ang)
+                                    x: bot.xx + fdistance * Math.cos(ang),
+                                    y: bot.yy + fdistance * Math.sin(ang)
                                 },
                                 'blue', 2);
                         }
