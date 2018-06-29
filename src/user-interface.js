@@ -200,12 +200,12 @@ var userInterface = window.userInterface = (function(window, document) {
             }
             // Allows letter 'Z' to reset zoom.
             if (e.keyCode === 90) {
-                canvas.resetZoom();
+                zoom.reset();
             }
             // Allows numeric pad to affect absolute heading.
-            if (e.keyCode >= 97 && e.keyCode <= 105) {
+            if (e.keyCode >= 97 && e.keyCode <= 105 && e.keyCode != 101) {
                 const howmany = [3,2,1,4,0,0,-3,-2,-1];
-                actuator.changeHeadingAbs(howmany[e.keyCode-97] * Math.PI/4);
+                actuator.changeHeadingAbs(howmany[e.keyCode - 97] * Math.PI / 4);
             }
             // Allows letter 'B' to toggle ball mode.
             if (e.keyCode === 66) {
@@ -280,8 +280,8 @@ var userInterface = window.userInterface = (function(window, document) {
         // Returns the ascii arrow corresponding to a given angle.
         getArrow: function(ang) {
             const ARROWS = '→↘↓↙←↖↑↗';
-            if (ang < 0) ang += Math.PI * 2;
-            var idx = Math.round(ang / (Math.PI/4)) % 8;
+            if (ang < 0) ang += TAU;
+            var idx = Math.round(ang / (Math.PI / 4)) % 8;
             return ARROWS.charAt(idx);
         },
 
@@ -321,7 +321,7 @@ var userInterface = window.userInterface = (function(window, document) {
         // Loops.
         oefTimer: function() {
             var start = Date.now();
-            canvas.maintainZoom();
+            zoom.maintain();
             original_oef();
             if (userInterface.gfxEnabled) {
                 original_redraw();

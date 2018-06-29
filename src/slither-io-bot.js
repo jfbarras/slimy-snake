@@ -19,7 +19,7 @@ var actuator = window.actuator = (function(window) {
                 y: Math.round(bot.yy + 3 * bot.snakeRadius * sin)
             };
 
-            actuator.setMouseCoordinates(canvas.mapToMouse(window.goalCoordinates));
+            actuator.setMouseCoordinates(convert.mapToMouse(window.goalCoordinates));
         },
 
         // Changes heading by ang.
@@ -41,7 +41,32 @@ var actuator = window.actuator = (function(window) {
                     cos * (heading.y - bot.yy) + bot.yy)
             };
 
-            actuator.setMouseCoordinates(canvas.mapToMouse(window.goalCoordinates));
+            actuator.setMouseCoordinates(convert.mapToMouse(window.goalCoordinates));
+        }
+    };
+})(window);
+
+// Provides sorting functions.
+var sortby = window.sortby = (function(window) {
+    return {
+        // Sorts by property 'da' ascending.
+        ascDa: function (a, b) {
+            return a.da - b.da;
+        },
+
+        // Sorts by property 'distance' ascending.
+        ascDistance: function(a, b) {
+            return a.distance - b.distance;
+        },
+
+        // Sorts by property 'score' descending.
+        desScore: function(a, b) {
+            return b.score - a.score;
+        },
+
+        // Sorts by property 'sz' descending.
+        desSz: function(a, b) {
+            return b.sz - a.sz;
         }
     };
 })(window);
@@ -81,7 +106,7 @@ var head = window.head = (function(window) {
                 wuss.collisionPoints.push(scPoint);
 
                 if (window.visualDebugging) {
-                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
+                    pencil.drawCircle(shapes.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
                         'yellow', false);
                 }
 
@@ -99,7 +124,7 @@ var head = window.head = (function(window) {
                 wuss.collisionPoints.push(scPoint);
 
                 if (window.visualDebugging) {
-                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
+                    pencil.drawCircle(shapes.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
                         'yellow', false);
                 }
 
@@ -119,7 +144,7 @@ var part = window.part = (function(window) {
 
         isInBox: function(s, pts) {
             const sectorSide = Math.floor(Math.sqrt(window.sectors.length)) * window.sector_size;
-            const sectorBox = canvas.rect(
+            const sectorBox = shapes.rect(
                 bot.xx - (sectorSide / 2),
                 bot.yy - (sectorSide / 2),
                 sectorSide, sectorSide);
@@ -146,14 +171,14 @@ var part = window.part = (function(window) {
                 wuss.addCollisionAngle(scPoint);
 
                 if (window.visualDebugging > 2) {
-                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
+                    pencil.drawCircle(shapes.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
                         'yellow', false);
                 }
 
                 if (scPoint.distance <= Math.pow((5 * bot.snakeRadius) + scPoint.bubble, 2)) {
                     wuss.collisionPoints.push(scPoint);
                     if (window.visualDebugging > 1) {
-                        pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
+                        pencil.drawCircle(shapes.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
                             'red', false);
                     }
                 }
@@ -206,7 +231,7 @@ var wall = window.wall = (function(window) {
                 wuss.collisionPoints.push(scPoint);
                 wuss.addCollisionAngle(scPoint);
                 if (window.visualDebugging > 1) {
-                    pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
+                    pencil.drawCircle(shapes.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
                         'yellow', false);
                 }
             }
@@ -332,7 +357,7 @@ var wuss = window.wuss = (function(window) {
             head.seeHeads();
             wall.seeWall();
             wuss.bestUndefAngle();
-            wuss.collisionPoints.sort(bot.sortDistance);
+            wuss.collisionPoints.sort(sortby.ascDistance);
 
             if (window.visualDebugging > 1) {
                 for (let i = 0; i < wuss.collisionAngles.length; i++) {
@@ -398,11 +423,7 @@ var glut = window.glut = (function(window) {
                 da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
             };
 
-            // sort by delta angle
-            choices.sort(function (a, b) {
-              return a.da - b.da;
-            });
-
+            choices.sort(sortby.ascDa);
             return choices[0].ang;
         },
 
@@ -453,9 +474,7 @@ var glut = window.glut = (function(window) {
                 }
             }
 
-            glut.foodAngles.sort(function(a, b) {
-              return b.score - a.score;
-            });
+            glut.foodAngles.sort(sortby.desScore);
 
             for (let i = 0; i < glut.foodAngles.length; i++) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
@@ -518,7 +537,7 @@ var bot = window.bot = (function(window) {
         getHeadCircle: function(dw, dl, rm) {
             const s = bot.sin * bot.snakeWidth;
             const c = bot.cos * bot.snakeWidth;
-            return canvas.circle(
+            return shapes.circle(
                 bot.xx + dl * c + s + (dw + 1) * (bot.cos - s),
                 bot.yy + dl * s - c + (dw + 1) * (bot.sin + c),
                 rm * bot.snakeRadius);
@@ -537,17 +556,15 @@ var bot = window.bot = (function(window) {
 
         // Gets the angle index from specified angle.
         getAngleIndex: function(angle) {
-            const TP = 2 * Math.PI;
-
             while (angle < 0) {
-                angle += TP;
+                angle += TAU;
             }
 
-            while (angle > TP) {
-                angle -= TP;
+            while (angle > TAU) {
+                angle -= TAU;
             }
 
-            const index = Math.round(angle * (1 / (TP / bot.MAXARC)));
+            const index = Math.round(angle * (1 / (TAU / bot.MAXARC)));
 
             if (index === bot.MAXARC) {
                 return 0;
@@ -555,15 +572,10 @@ var bot = window.bot = (function(window) {
             return index;
         },
 
-        // Sorts by property 'distance' ascending.
-        sortDistance: function(a, b) {
-            return a.distance - b.distance;
-        },
-
         every: function() {
             bot.cos = Math.cos(window.snake.ang);
             bot.sin = Math.sin(window.snake.ang);
-            bot.MAXARC = (2 * Math.PI) / bot.opt.arcSize;
+            bot.MAXARC = TAU / bot.opt.arcSize;
             bot.xx = window.snake.xx + window.snake.fx;
             bot.yy = window.snake.yy + window.snake.fy;
 

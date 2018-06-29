@@ -1,4 +1,6 @@
 
+/* jshint esversion: 6 */
+
 // Sends arguments to console log.
 window.log = function() {
     if (window.logDebugging) {
@@ -6,8 +8,8 @@ window.log = function() {
     }
 };
 
-// Helps with geometry, coordinate convertion, etc.
-var canvas = window.canvas = (function(window) {
+// Helps with coordinate convertion.
+var convert = window.convert = (function(window) {
     return {
         // Converts Map coordinates to Mouse coordinates.
         mapToMouse: function(point) {
@@ -29,39 +31,49 @@ var canvas = window.canvas = (function(window) {
         // Converts Map circle to Canvas circle.
         circleMapToCanvas: function(circle) {
             // Convert origin.
-            var newCircle = canvas.mapToCanvas({
+            var newCircle = convert.mapToCanvas({
                 x: circle.x,
                 y: circle.y
             });
             // Scales radius by gsc.
-            return canvas.circle(
+            return shapes.circle(
                 newCircle.x,
                 newCircle.y,
                 circle.radius * window.gsc
             );
-        },
+        }
+    };
+})(window);
 
+// Helps with building shapes.
+var shapes = window.shapes = (function(window) {
+    return {
         // Constructs a rectangle.
         rect: function(x, y, w, h) {
-            var r = {
+            return {
                 x: Math.round(x),
                 y: Math.round(y),
                 width: Math.round(w),
                 height: Math.round(h)
             };
-            return r;
         },
 
         // Constructs a circle.
         circle: function(x, y, r) {
-            var c = {
+            return {
                 x: Math.round(x),
                 y: Math.round(y),
                 radius: Math.round(r)
             };
-            return c;
-        },
+        }
+    };
+})(window);
 
+const TAU = 2 * Math.PI;
+
+// Helps with geometry and trig.
+var canvas = window.canvas = (function(window) {
+    return {
         // Approximates the value of the arc tangent of y/ x.
         fastAtan2: function(y, x) {
             const QPI = Math.PI / 4;
@@ -87,30 +99,9 @@ var canvas = window.canvas = (function(window) {
         // ie How much does Source need to turn to align with Target?
         angleBetween: function(target, source) {
             var da = target - source;
-            if (da > Math.PI) da -= 2 * Math.PI;
-            if (da < -Math.PI) da += 2 * Math.PI;
+            if (da > Math.PI) da -= TAU;
+            if (da < -Math.PI) da += TAU;
             return da;
-        },
-
-        // Adjusts zoom in response to mouse wheel.
-        setZoom: function(e) {
-            if (window.gsc) {
-                window.gsc *= Math.pow(0.9, e.wheelDelta / -120 || e.detail / 2 || 0);
-                window.desired_gsc = window.gsc;
-            }
-        },
-
-        // Restores zoom to the default value.
-        resetZoom: function() {
-            window.gsc = 0.9;
-            window.desired_gsc = 0.9;
-        },
-
-        // Sets zoom to desired zoom.
-        maintainZoom: function() {
-            if (window.desired_gsc !== undefined) {
-                window.gsc = window.desired_gsc;
-            }
         },
 
         // Computes distance squared.
@@ -127,6 +118,32 @@ var canvas = window.canvas = (function(window) {
     };
 })(window);
 
+// Helps with zoom.
+var zoom = window.zoom = (function(window) {
+    return {
+        // Adjusts zoom in response to mouse wheel.
+        set: function(e) {
+            if (window.gsc) {
+                window.gsc *= Math.pow(0.9, e.wheelDelta / -120 || e.detail / 2 || 0);
+                window.desired_gsc = window.gsc;
+            }
+        },
+
+        // Restores zoom to the default value.
+        reset: function() {
+            window.gsc = 0.9;
+            window.desired_gsc = 0.9;
+        },
+
+        // Sets zoom to desired zoom.
+        maintain: function() {
+            if (window.desired_gsc !== undefined) {
+                window.gsc = window.desired_gsc;
+            }
+        }
+    };
+})(window);
+
 // Draws shapes to the canvas.
 var pencil = window.pencil = (function(window) {
     return {
@@ -135,7 +152,7 @@ var pencil = window.pencil = (function(window) {
             if (alpha === undefined) alpha = 1;
 
             var context = window.mc.getContext('2d');
-            var lc = canvas.mapToCanvas({x: rect.x, y: rect.y});
+            var lc = convert.mapToCanvas({x: rect.x, y: rect.y});
 
             context.save();
             context.globalAlpha = alpha;
@@ -155,13 +172,13 @@ var pencil = window.pencil = (function(window) {
             if (circle.radius === undefined) circle.radius = 5;
 
             var context = window.mc.getContext('2d');
-            var newCircle = canvas.circleMapToCanvas(circle);
+            var newCircle = convert.circleMapToCanvas(circle);
 
             context.save();
             context.globalAlpha = alpha;
             context.beginPath();
             context.strokeStyle = color;
-            context.arc(newCircle.x, newCircle.y, newCircle.radius, 0, Math.PI * 2);
+            context.arc(newCircle.x, newCircle.y, newCircle.radius, 0, TAU);
             context.stroke();
             if (fill) {
                 context.fillStyle = color;
@@ -199,8 +216,8 @@ var pencil = window.pencil = (function(window) {
             if (width === undefined) width = 5;
 
             var context = window.mc.getContext('2d');
-            var dp1 = canvas.mapToCanvas(p1);
-            var dp2 = canvas.mapToCanvas(p2);
+            var dp1 = convert.mapToCanvas(p1);
+            var dp2 = convert.mapToCanvas(p2);
 
             context.save();
             context.beginPath();
