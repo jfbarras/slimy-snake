@@ -46,6 +46,31 @@ var actuator = window.actuator = (function(window) {
     };
 })(window);
 
+// Provides sorting functions.
+var sortby = window.sortby = (function(window) {
+    return {
+        // Sorts by property 'da' ascending.
+        ascDa: function (a, b) {
+            return a.da - b.da;
+        },
+
+        // Sorts by property 'distance' ascending.
+        ascDistance: function(a, b) {
+            return a.distance - b.distance;
+        },
+
+        // Sorts by property 'score' descending.
+        desScore: function(a, b) {
+            return b.score - a.score;
+        },
+
+        // Sorts by property 'sz' descending.
+        desSz: function(a, b) {
+            return b.sz - a.sz;
+        }
+    };
+})(window);
+
 // Sees snake heads.
 var head = window.head = (function(window) {
     return {
@@ -332,7 +357,7 @@ var wuss = window.wuss = (function(window) {
             head.seeHeads();
             wall.seeWall();
             wuss.bestUndefAngle();
-            wuss.collisionPoints.sort(bot.sortDistance);
+            wuss.collisionPoints.sort(sortby.ascDistance);
 
             if (window.visualDebugging > 1) {
                 for (let i = 0; i < wuss.collisionAngles.length; i++) {
@@ -398,11 +423,7 @@ var glut = window.glut = (function(window) {
                 da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
             };
 
-            // sort by delta angle
-            choices.sort(function (a, b) {
-              return a.da - b.da;
-            });
-
+            choices.sort(sortby.ascDa);
             return choices[0].ang;
         },
 
@@ -453,9 +474,7 @@ var glut = window.glut = (function(window) {
                 }
             }
 
-            glut.foodAngles.sort(function(a, b) {
-              return b.score - a.score;
-            });
+            glut.foodAngles.sort(sortby.desScore);
 
             for (let i = 0; i < glut.foodAngles.length; i++) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
@@ -551,11 +570,6 @@ var bot = window.bot = (function(window) {
                 return 0;
             }
             return index;
-        },
-
-        // Sorts by property 'distance' ascending.
-        sortDistance: function(a, b) {
-            return a.distance - b.distance;
         },
 
         every: function() {
