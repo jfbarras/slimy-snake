@@ -83,6 +83,15 @@ var canvas = window.canvas = (function(window) {
             return angle;
         },
 
+        // Returns the shortest signed difference between two angles,
+        // ie How much does Source need to turn to align with Target?
+        angleBetween: function(target, source) {
+            var da = target - source;
+            if (da > Math.PI) da -= 2 * Math.PI;
+            if (da < -Math.PI) da += 2 * Math.PI;
+            return da;
+        },
+
         // Adjusts zoom in response to mouse wheel.
         setZoom: function(e) {
             if (window.gsc) {
