@@ -1,4 +1,6 @@
 
+/* jshint esversion: 6 */
+
 // Sends arguments to console log.
 window.log = function() {
     if (window.logDebugging) {
@@ -67,6 +69,8 @@ var shapes = window.shapes = (function(window) {
     };
 })(window);
 
+const TAU = 2 * Math.PI;
+
 // Helps with geometry and trig.
 var canvas = window.canvas = (function(window) {
     return {
@@ -95,8 +99,8 @@ var canvas = window.canvas = (function(window) {
         // ie How much does Source need to turn to align with Target?
         angleBetween: function(target, source) {
             var da = target - source;
-            if (da > Math.PI) da -= 2 * Math.PI;
-            if (da < -Math.PI) da += 2 * Math.PI;
+            if (da > Math.PI) da -= TAU;
+            if (da < -Math.PI) da += TAU;
             return da;
         },
 
@@ -174,7 +178,7 @@ var pencil = window.pencil = (function(window) {
             context.globalAlpha = alpha;
             context.beginPath();
             context.strokeStyle = color;
-            context.arc(newCircle.x, newCircle.y, newCircle.radius, 0, Math.PI * 2);
+            context.arc(newCircle.x, newCircle.y, newCircle.radius, 0, TAU);
             context.stroke();
             if (fill) {
                 context.fillStyle = color;

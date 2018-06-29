@@ -537,17 +537,15 @@ var bot = window.bot = (function(window) {
 
         // Gets the angle index from specified angle.
         getAngleIndex: function(angle) {
-            const TP = 2 * Math.PI;
-
             while (angle < 0) {
-                angle += TP;
+                angle += TAU;
             }
 
-            while (angle > TP) {
-                angle -= TP;
+            while (angle > TAU) {
+                angle -= TAU;
             }
 
-            const index = Math.round(angle * (1 / (TP / bot.MAXARC)));
+            const index = Math.round(angle * (1 / (TAU / bot.MAXARC)));
 
             if (index === bot.MAXARC) {
                 return 0;
@@ -563,7 +561,7 @@ var bot = window.bot = (function(window) {
         every: function() {
             bot.cos = Math.cos(window.snake.ang);
             bot.sin = Math.sin(window.snake.ang);
-            bot.MAXARC = (2 * Math.PI) / bot.opt.arcSize;
+            bot.MAXARC = TAU / bot.opt.arcSize;
             bot.xx = window.snake.xx + window.snake.fx;
             bot.yy = window.snake.yy + window.snake.fy;
 
