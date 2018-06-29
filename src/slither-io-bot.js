@@ -445,8 +445,8 @@ var glut = window.glut = (function(window) {
         scan: function() {
             glut.foodAngles = [];
 
-            for (var i = 0; i < window.foods.length && window.foods[i] !== null; i++) {
-                var f = window.foods[i];
+            for (let i = 0; i < window.foods.length && window.foods[i] !== null; i++) {
+                const f = window.foods[i];
 
                 if (!f.eaten) {
                     glut.addFoodAngle(f);
@@ -457,21 +457,28 @@ var glut = window.glut = (function(window) {
               return b.score - a.score;
             });
 
-            // Aims for best foodAngle based on score.
-            glut.currentFood = {
-                x: glut.foodAngles[0].x,
-                y: glut.foodAngles[0].y,
-                sz: glut.foodAngles[0].sz,
-                da: glut.foodAngles[0].da
-            };
+            for (let i = 0; i < glut.foodAngles.length; i++) {
+                if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
+                    const fa = glut.foodAngles[i];
+
+                        glut.currentFood = {
+                            x: fa.x,
+                            y: fa.y,
+                            sz: fa.sz,
+                            da: fa.da
+                        };
+
+                    break;
+                }
+            }
 
             if (window.visualDebugging > 0) {
                 pencil.drawLine({
                         x: bot.xx,
                         y: bot.yy
                     }, {
-                        x: glut.foodAngles[0].x,
-                        y: glut.foodAngles[0].y
+                        x: glut.currentFood.x,
+                        y: glut.currentFood.y
                     },
                     'blue', 2);
             }

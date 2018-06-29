@@ -44,6 +44,8 @@ You can conserve resources (and therefore run more bots) by enabling "no graphic
 
 Bot modules detect: 1. the outer wall, 2. actual and predicted enemy snake head positions, and 3. enemy body parts.
 
+Bot can find the best angle for food.
+
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
 
