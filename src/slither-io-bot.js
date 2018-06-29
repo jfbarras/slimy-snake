@@ -150,7 +150,7 @@ var part = window.part = (function(window) {
                         'yellow', false);
                 }
 
-                if (scPoint.distance <= Math.pow((5 * bot.snakeRadius) + scPoint.radius, 2)) {
+                if (scPoint.distance <= Math.pow((5 * bot.snakeRadius) + scPoint.bubble, 2)) {
                     wuss.collisionPoints.push(scPoint);
                     if (window.visualDebugging > 1) {
                         pencil.drawCircle(canvas.circle(scPoint.xx, scPoint.yy, scPoint.bubble),
