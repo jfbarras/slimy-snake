@@ -359,9 +359,17 @@ var glut = window.glut = (function(window) {
 
         // Checks which angle is best to get to this food.
         getFoodAng: function(f) {
-            const ang = canvas.fastAtan2(
+            var tmp;
+            var choices = [];
+            // mid angle
+            tmp = canvas.fastAtan2(
                 Math.round(f.yy - bot.yy),
                 Math.round(f.xx - bot.xx));
+            choices[0] = {
+                ang: tmp,
+                da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
+            };
+            // adapt some getHeadCircle code
             const s = Math.sin(ang) * bot.snakeWidth;
             const c = Math.cos(ang) * bot.snakeWidth;
             const leftLip = {
@@ -372,17 +380,29 @@ var glut = window.glut = (function(window) {
                 x: bot.xx + c + s + 2 * (Math.cos(ang) - s),
                 y: bot.yy + s - c + 2 * (Math.sin(ang) + c),
             };
-            const leftAngle = canvas.fastAtan2(
+            // left angle
+            tmp = canvas.fastAtan2(
                 Math.round(f.yy - leftLip.y),
                 Math.round(f.xx - leftLip.x));
-            const rightAngle = canvas.fastAtan2(
+            choices[1] = {
+                ang: tmp,
+                da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
+            };
+            // right angle
+            tmp = canvas.fastAtan2(
                 Math.round(f.yy - rightLip.y),
                 Math.round(f.xx - rightLip.x));
-            const leftDA = Math.abs(canvas.angleBetween(leftAngle, window.snake.ehang));
-            const rightDA = Math.abs(canvas.angleBetween(rightAngle, window.snake.ehang));
-            const useLeft = leftDA < rightDA;
+            choices[2] = {
+                ang: tmp,
+                da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
+            };
 
-            return useLeft ? leftAngle : rightAngle;
+            // sort by delta angle
+            choices.sort(function (a, b) {
+              return a.da - b.da;
+            });
+
+            return choices[0].ang;
         },
 
         // Adds and scores foodAngles.
@@ -391,10 +411,13 @@ var glut = window.glut = (function(window) {
             const aIndex = bot.getAngleIndex(ang);
 
             bot.injectDistance2(f);
+            // reject food beyond obstacles
+            if (wuss.collisionAngles[aIndex] !== undefined &&
+              f.distance > wuss.collisionAngles[aIndex].distance) return;
+
             const fdistance = Math.sqrt(f.distance);
 
-            if ((f.sz > 10 || fdistance < bot.snakeWidth * 10) && (wuss.collisionAngles[aIndex] === undefined ||
-                    wuss.collisionAngles[aIndex].distance > f.distance)) {
+            if (f.sz > 10 || fdistance < bot.snakeWidth * 10) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
                         x: Math.round(f.xx),
