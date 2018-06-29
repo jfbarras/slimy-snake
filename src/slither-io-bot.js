@@ -356,6 +356,7 @@ var wuss = window.wuss = (function(window) {
 var glut = window.glut = (function(window) {
     return {
         foodAngles: [],
+        currentFood: {},
 
         // Checks which angle is best to get to this food.
         getFoodAng: function(f) {
@@ -435,17 +436,6 @@ var glut = window.glut = (function(window) {
                         glut.foodAngles[aIndex].x = Math.round(f.xx);
                         glut.foodAngles[aIndex].y = Math.round(f.yy);
                         glut.foodAngles[aIndex].distance = f.distance;
-                        if (window.visualDebugging > 1) {
-                            pencil.drawCircle(canvas.circle(f.xx, f.yy, 5), 'white');
-                            pencil.drawLine({
-                                    x: bot.xx,
-                                    y: bot.yy
-                                }, {
-                                    x: bot.xx + fdistance * Math.cos(ang),
-                                    y: bot.yy + fdistance * Math.sin(ang)
-                                },
-                                'blue', 2);
-                        }
                     }
                 }
             }
@@ -461,6 +451,29 @@ var glut = window.glut = (function(window) {
                 if (!f.eaten) {
                     glut.addFoodAngle(f);
                 }
+            }
+
+            glut.foodAngles.sort(function(a, b) {
+              return b.score - a.score;
+            });
+
+            // Aims for best foodAngle based on score.
+            glut.currentFood = {
+                x: glut.foodAngles[0].x,
+                y: glut.foodAngles[0].y,
+                sz: glut.foodAngles[0].sz,
+                da: glut.foodAngles[0].da
+            };
+
+            if (window.visualDebugging > 0) {
+                pencil.drawLine({
+                        x: bot.xx,
+                        y: bot.yy
+                    }, {
+                        x: glut.foodAngles[0].x,
+                        y: glut.foodAngles[0].y
+                    },
+                    'blue', 2);
             }
         }
     };
