@@ -6,8 +6,8 @@ window.log = function() {
     }
 };
 
-// Helps with geometry, coordinate convertion, etc.
-var canvas = window.canvas = (function(window) {
+// Helps with coordinate convertion.
+var convert = window.convert = (function(window) {
     return {
         // Converts Map coordinates to Mouse coordinates.
         mapToMouse: function(point) {
@@ -29,18 +29,23 @@ var canvas = window.canvas = (function(window) {
         // Converts Map circle to Canvas circle.
         circleMapToCanvas: function(circle) {
             // Convert origin.
-            var newCircle = canvas.mapToCanvas({
+            var newCircle = convert.mapToCanvas({
                 x: circle.x,
                 y: circle.y
             });
             // Scales radius by gsc.
-            return canvas.circle(
+            return shapes.circle(
                 newCircle.x,
                 newCircle.y,
                 circle.radius * window.gsc
             );
-        },
+        }
+    };
+})(window);
 
+// Helps with building shapes.
+var shapes = window.shapes = (function(window) {
+    return {
         // Constructs a rectangle.
         rect: function(x, y, w, h) {
             var r = {
@@ -60,8 +65,13 @@ var canvas = window.canvas = (function(window) {
                 radius: Math.round(r)
             };
             return c;
-        },
+        }
+    };
+})(window);
 
+// Helps with geometry and zoom.
+var canvas = window.shapes = (function(window) {
+    return {
         // Approximates the value of the arc tangent of y/ x.
         fastAtan2: function(y, x) {
             const QPI = Math.PI / 4;
@@ -135,7 +145,7 @@ var pencil = window.pencil = (function(window) {
             if (alpha === undefined) alpha = 1;
 
             var context = window.mc.getContext('2d');
-            var lc = canvas.mapToCanvas({x: rect.x, y: rect.y});
+            var lc = convert.mapToCanvas({x: rect.x, y: rect.y});
 
             context.save();
             context.globalAlpha = alpha;
@@ -155,7 +165,7 @@ var pencil = window.pencil = (function(window) {
             if (circle.radius === undefined) circle.radius = 5;
 
             var context = window.mc.getContext('2d');
-            var newCircle = canvas.circleMapToCanvas(circle);
+            var newCircle = convert.circleMapToCanvas(circle);
 
             context.save();
             context.globalAlpha = alpha;
@@ -199,8 +209,8 @@ var pencil = window.pencil = (function(window) {
             if (width === undefined) width = 5;
 
             var context = window.mc.getContext('2d');
-            var dp1 = canvas.mapToCanvas(p1);
-            var dp2 = canvas.mapToCanvas(p2);
+            var dp1 = convert.mapToCanvas(p1);
+            var dp2 = convert.mapToCanvas(p2);
 
             context.save();
             context.beginPath();
