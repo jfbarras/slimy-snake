@@ -48,29 +48,27 @@ var shapes = window.shapes = (function(window) {
     return {
         // Constructs a rectangle.
         rect: function(x, y, w, h) {
-            var r = {
+            return {
                 x: Math.round(x),
                 y: Math.round(y),
                 width: Math.round(w),
                 height: Math.round(h)
             };
-            return r;
         },
 
         // Constructs a circle.
         circle: function(x, y, r) {
-            var c = {
+            return {
                 x: Math.round(x),
                 y: Math.round(y),
                 radius: Math.round(r)
             };
-            return c;
         }
     };
 })(window);
 
-// Helps with geometry and zoom.
-var canvas = window.shapes = (function(window) {
+// Helps with geometry and trig.
+var canvas = window.canvas = (function(window) {
     return {
         // Approximates the value of the arc tangent of y/ x.
         fastAtan2: function(y, x) {
@@ -102,27 +100,6 @@ var canvas = window.shapes = (function(window) {
             return da;
         },
 
-        // Adjusts zoom in response to mouse wheel.
-        setZoom: function(e) {
-            if (window.gsc) {
-                window.gsc *= Math.pow(0.9, e.wheelDelta / -120 || e.detail / 2 || 0);
-                window.desired_gsc = window.gsc;
-            }
-        },
-
-        // Restores zoom to the default value.
-        resetZoom: function() {
-            window.gsc = 0.9;
-            window.desired_gsc = 0.9;
-        },
-
-        // Sets zoom to desired zoom.
-        maintainZoom: function() {
-            if (window.desired_gsc !== undefined) {
-                window.gsc = window.desired_gsc;
-            }
-        },
-
         // Computes distance squared.
         getDistance2: function(x1, y1, x2, y2) {
             var distance2 = Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2);
@@ -133,6 +110,32 @@ var canvas = window.shapes = (function(window) {
         pointInRect: function(point, rect) {
             return (rect.x <= point.x && rect.y <= point.y &&
                 rect.x + rect.width >= point.x && rect.y + rect.height >= point.y);
+        }
+    };
+})(window);
+
+// Helps with zoom.
+var zoom = window.zoom = (function(window) {
+    return {
+        // Adjusts zoom in response to mouse wheel.
+        set: function(e) {
+            if (window.gsc) {
+                window.gsc *= Math.pow(0.9, e.wheelDelta / -120 || e.detail / 2 || 0);
+                window.desired_gsc = window.gsc;
+            }
+        },
+
+        // Restores zoom to the default value.
+        reset: function() {
+            window.gsc = 0.9;
+            window.desired_gsc = 0.9;
+        },
+
+        // Sets zoom to desired zoom.
+        maintain: function() {
+            if (window.desired_gsc !== undefined) {
+                window.gsc = window.desired_gsc;
+            }
         }
     };
 })(window);

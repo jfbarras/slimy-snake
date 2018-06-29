@@ -200,7 +200,7 @@ var userInterface = window.userInterface = (function(window, document) {
             }
             // Allows letter 'Z' to reset zoom.
             if (e.keyCode === 90) {
-                canvas.resetZoom();
+                zoom.reset();
             }
             // Allows numeric pad to affect absolute heading.
             if (e.keyCode >= 97 && e.keyCode <= 105) {
@@ -321,7 +321,7 @@ var userInterface = window.userInterface = (function(window, document) {
         // Loops.
         oefTimer: function() {
             var start = Date.now();
-            canvas.maintainZoom();
+            zoom.maintain();
             original_oef();
             if (userInterface.gfxEnabled) {
                 original_redraw();

@@ -35,8 +35,8 @@ The MIT License (MIT)
     window.nick.value = userInterface.loadPreference('savedNick', 'Slither.io-bot');
 
     // Listens for mouse wheel scroll.
-    document.body.addEventListener('mousewheel', canvas.setZoom);
-    document.body.addEventListener('DOMMouseScroll', canvas.setZoom);
+    document.body.addEventListener('mousewheel', zoom.set);
+    document.body.addEventListener('DOMMouseScroll', zoom.set);
 
     // Sets the render mode.
     userInterface.setMobileRendering(window.mobileRender);
