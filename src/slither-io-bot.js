@@ -15,8 +15,8 @@ var actuator = window.actuator = (function(window) {
             const sin = Math.sin(angle);
 
             window.goalCoordinates = {
-                x: Math.round(bot.xx + 3 * bot.snakeRadius * cos),
-                y: Math.round(bot.yy + 3 * bot.snakeRadius * sin)
+                x: Math.round(bot.xx + bot.stdBubble * cos),
+                y: Math.round(bot.yy + bot.stdBubble * sin)
             };
 
             actuator.setMouseCoordinates(convert.mapToMouse(window.goalCoordinates));
@@ -25,8 +25,8 @@ var actuator = window.actuator = (function(window) {
         // Changes heading by ang.
         changeHeadingRel: function(angle) {
             const heading = {
-                x: bot.xx + 3 * bot.snakeRadius * bot.cos,
-                y: bot.yy + 3 * bot.snakeRadius * bot.sin
+                x: bot.xx + bot.stdBubble * bot.cos,
+                y: bot.yy + bot.stdBubble * bot.sin
             };
 
             const cos = Math.cos(-angle);
@@ -76,7 +76,7 @@ var head = window.head = (function(window) {
     return {
         opt: {
             // radius x speed multiplier
-            mult: 10,
+            mult: 10 / 4,
         },
 
         seeHeads: function() {
@@ -90,13 +90,13 @@ var head = window.head = (function(window) {
                 const s = window.snakes[snake];
                 const snakeRadius = bot.getSnakeWidth(s.sc) / 2;
                 const sSpMult = Math.min(1, s.sp / 5.78 - 0.2);
-                const sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.mult / 4;
+                const sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.mult;
 
                 scPoint = {
                     xx: s.xx + Math.cos(s.ehang) * sRadius * 0.75,
                     yy: s.yy + Math.sin(s.ehang) * sRadius * 0.75,
                     snake: snake,
-                    hardBody: undefined,
+                    hardBody: 1,
                     bubble: sRadius,
                     type: 'pred'
                 };
@@ -139,7 +139,7 @@ var part = window.part = (function(window) {
     return {
         opt: {
             // radius multiplier
-            mult: 10,
+            mult: 10 / 10,
         },
 
         isInBox: function(s, pts) {
@@ -158,7 +158,7 @@ var part = window.part = (function(window) {
             var scPoint = {
                 snake: snake,
                 hardBody: snakeRadius,
-                bubble: (snakeRadius + bot.snakeWidth * 1.5) * part.opt.mult / 10,
+                bubble: (snakeRadius + bot.stdBubble) * part.opt.mult,
                 type: 'part'
             };
             for (let pts = 0, lp = s.pts.length; pts < lp; pts += k) {
@@ -221,7 +221,7 @@ var wall = window.wall = (function(window) {
             var scPoint = {
                 snake: -1,
                 hardBody: 1,
-                bubble: bot.snakeWidth * 1.5,
+                bubble: bot.stdBubble,
                 type: 'wall'
             };
             for (let i = -j; i <= j; i++) {
@@ -582,12 +582,13 @@ var bot = window.bot = (function(window) {
             bot.speedMult = window.snake.sp / bot.opt.speedBase;
             bot.snakeWidth = bot.getSnakeWidth();
             bot.snakeRadius = bot.snakeWidth / 2;
+            bot.stdBubble = 3 * bot.snakeRadius;
             bot.snakeLength = bot.getSnakeLength();
 
             if (window.visualDebugging > 0) {
                 // coral food collection sector
                 pencil.drawAngle(window.snake.ehang - Math.PI / 4, window.snake.ehang + Math.PI / 4,
-                    3 * bot.snakeRadius, 'coral', false);
+                    bot.stdBubble, 'coral', false);
                 // dark red circles depict snake turn radius
                 pencil.drawCircle(bot.getHeadCircle(-1, 0, 1), 'darkred');
                 pencil.drawCircle(bot.getHeadCircle( 1, 0, 1), 'darkred');
