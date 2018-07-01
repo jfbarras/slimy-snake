@@ -213,7 +213,7 @@ var pencil = window.pencil = (function(window) {
 
         // Draws a line on the canvas.
         drawLine: function(p1, p2, color, width) {
-            if (width === undefined) width = 5;
+            if (width === undefined) width = 2;
 
             var context = window.mc.getContext('2d');
             var dp1 = convert.mapToCanvas(p1);

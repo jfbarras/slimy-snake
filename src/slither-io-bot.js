@@ -105,9 +105,8 @@ var head = window.head = (function(window) {
                 wuss.addCollisionAngle(obs);
                 wuss.collisionPoints.push(obs);
 
-                if (window.visualDebugging) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
-                        'yellow', false);
+                if (window.visualDebugging > 0) {
+                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
                 }
 
                 obs = {
@@ -123,9 +122,8 @@ var head = window.head = (function(window) {
                 wuss.addCollisionAngle(obs);
                 wuss.collisionPoints.push(obs);
 
-                if (window.visualDebugging) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
-                        'yellow', false);
+                if (window.visualDebugging > 0) {
+                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
                 }
 
                 part.seeParts(snake);
@@ -170,16 +168,14 @@ var part = window.part = (function(window) {
                 bot.injectDistance2(obs);
                 wuss.addCollisionAngle(obs);
 
-                if (window.visualDebugging > 2) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
-                        'yellow', false);
-                }
                 if (obs.distance <= Math.pow((5 * bot.snakeRadius) + obs.bubble, 2)) {
                     wuss.collisionPoints.push(obs);
+
                     if (window.visualDebugging > 1) {
-                        pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
-                            'red', false);
+                        pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'red');
                     }
+                } else if (window.visualDebugging > 2) {
+                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'orange');
                 }
             }
         }
@@ -227,11 +223,11 @@ var wall = window.wall = (function(window) {
                 obs.xx = wall.MID_X + wall.MAP_R * Math.cos(midAng + i * wall.opt.arc);
                 obs.yy = wall.MID_Y + wall.MAP_R * Math.sin(midAng + i * wall.opt.arc);
                 bot.injectDistance2(obs);
-                wuss.collisions.push(obs);
+                wuss.collisionPoints.push(obs);
                 wuss.addCollisionAngle(obs);
+
                 if (window.visualDebugging > 1) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
-                        'yellow', false);
+                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
                 }
             }
         }
@@ -311,6 +307,7 @@ var wuss = window.wuss = (function(window) {
             }
             if (best.idx !== undefined) {
                 const ang = best.idx * bot.opt.arcSize;
+
                 if (window.visualDebugging > 0) {
                     pencil.drawLine({
                             x: bot.xx,
@@ -319,8 +316,9 @@ var wuss = window.wuss = (function(window) {
                             x: bot.xx + 1000 * Math.cos(ang),
                             y: bot.yy + 1000 * Math.sin(ang)
                         },
-                        'lime', 2);
+                        'lime');
                 }
+
                 return ang;
             }
         },
@@ -368,7 +366,7 @@ var wuss = window.wuss = (function(window) {
                                 x: wuss.collisionAngles[i].x,
                                 y: wuss.collisionAngles[i].y
                             },
-                            '#251d11', 2);
+                            '#251d11'); // very dark (mostly black) orange
                     }
                 }
             }
@@ -498,7 +496,7 @@ var glut = window.glut = (function(window) {
                         x: glut.currentFood.x,
                         y: glut.currentFood.y
                     },
-                    'blue', 2);
+                    'blue');
             }
         }
     };
