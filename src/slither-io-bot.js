@@ -382,29 +382,28 @@ var glut = window.glut = (function(window) {
 
         // Checks which angle is best to get to this food.
         getFoodAng: function(f) {
-            var tmp;
             var choices = [];
             // mid angle
-            tmp = canvas.fastAtan2(
+            const mid = canvas.fastAtan2(
                 Math.round(f.yy - bot.yy),
                 Math.round(f.xx - bot.xx));
             choices[0] = {
-                ang: tmp,
-                da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
+                ang: mid,
+                da: Math.abs(canvas.angleBetween(mid, window.snake.ehang))
             };
             // adapt some getHeadCircle code
-            const s = Math.sin(ang) * bot.snakeWidth;
-            const c = Math.cos(ang) * bot.snakeWidth;
+            const s = Math.sin(mid) * bot.snakeWidth;
+            const c = Math.cos(mid) * bot.snakeWidth;
             const leftLip = {
                 x: bot.xx + c + s,
                 y: bot.yy + s - c,
             };
             const rightLip = {
-                x: bot.xx + c + s + 2 * (Math.cos(ang) - s),
-                y: bot.yy + s - c + 2 * (Math.sin(ang) + c),
+                x: bot.xx + c - s + 2 * Math.cos(mid),
+                y: bot.yy + s + c + 2 * Math.sin(mid),
             };
             // left angle
-            tmp = canvas.fastAtan2(
+            var tmp = canvas.fastAtan2(
                 Math.round(f.yy - leftLip.y),
                 Math.round(f.xx - leftLip.x));
             choices[1] = {
@@ -435,12 +434,14 @@ var glut = window.glut = (function(window) {
               f.distance > wuss.collisionAngles[aIndex].distance) return;
 
             const fdistance = Math.sqrt(f.distance);
+            const nx = Math.round(bot.xx + fdistance * Math.cos(ang));
+            const ny = Math.round(bot.yy + fdistance * Math.sin(ang));
 
             if (f.sz > 10 || fdistance < bot.snakeWidth * 10) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
-                        x: Math.round(f.xx),
-                        y: Math.round(f.yy),
+                        x: nx,
+                        y: ny,
                         ang: ang,
                         da: canvas.angleBetween(ang, window.snake.ehang),
                         distance: f.distance,
@@ -451,8 +452,10 @@ var glut = window.glut = (function(window) {
                     glut.foodAngles[aIndex].sz += f.sz;
                     glut.foodAngles[aIndex].score += f.sz / f.distance;
                     if (glut.foodAngles[aIndex].distance > f.distance) {
-                        glut.foodAngles[aIndex].x = Math.round(f.xx);
-                        glut.foodAngles[aIndex].y = Math.round(f.yy);
+                        glut.foodAngles[aIndex].x = nx;
+                        glut.foodAngles[aIndex].y = ny;
+                        glut.foodAngles[aIndex].ang = ang;
+                        glut.foodAngles[aIndex].da = canvas.angleBetween(ang, window.snake.ehang);
                         glut.foodAngles[aIndex].distance = f.distance;
                     }
                 }
