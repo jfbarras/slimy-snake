@@ -11,15 +11,11 @@ var actuator = window.actuator = (function(window) {
 
         // Changes heading to ang.
         changeHeadingAbs: function(angle) {
-            const cos = Math.cos(angle);
-            const sin = Math.sin(angle);
-
-            window.goalCoordinates = {
-                x: Math.round(bot.xx + bot.stdBubble * cos),
-                y: Math.round(bot.yy + bot.stdBubble * sin)
+            const goal = {
+                x: Math.round(bot.xx + bot.stdBubble * Math.cos(angle)),
+                y: Math.round(bot.yy + bot.stdBubble * Math.sin(angle))
             };
-
-            actuator.setMouseCoordinates(convert.mapToMouse(window.goalCoordinates));
+            actuator.setMouseCoordinates(convert.mapToMouse(goal));
         },
 
         // Changes heading by ang.
@@ -28,11 +24,9 @@ var actuator = window.actuator = (function(window) {
                 x: bot.xx + bot.stdBubble * bot.cos,
                 y: bot.yy + bot.stdBubble * bot.sin
             };
-
             const cos = Math.cos(-angle);
             const sin = Math.sin(-angle);
-
-            window.goalCoordinates = {
+            const goal = {
                 x: Math.round(
                     cos * (heading.x - bot.xx) -
                     sin * (heading.y - bot.yy) + bot.xx),
@@ -40,8 +34,7 @@ var actuator = window.actuator = (function(window) {
                     sin * (heading.x - bot.xx) +
                     cos * (heading.y - bot.yy) + bot.yy)
             };
-
-            actuator.setMouseCoordinates(convert.mapToMouse(window.goalCoordinates));
+            actuator.setMouseCoordinates(convert.mapToMouse(goal));
         }
     };
 })(window);
