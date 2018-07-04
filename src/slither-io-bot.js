@@ -373,52 +373,11 @@ var glut = window.glut = (function(window) {
         foodAngles: [],
         currentFood: {},
 
-        // Checks which angle is best to get to this food.
-        getFoodAng: function(f) {
-            var choices = [];
-            // mid angle
-            const mid = canvas.fastAtan2(
-                Math.round(f.yy - bot.yy),
-                Math.round(f.xx - bot.xx));
-            choices[0] = {
-                ang: mid,
-                da: Math.abs(canvas.angleBetween(mid, window.snake.ehang))
-            };
-            // adapt some getHeadCircle code
-            const s = Math.sin(mid) * bot.snakeWidth;
-            const c = Math.cos(mid) * bot.snakeWidth;
-            const leftLip = {
-                x: bot.xx + c + s,
-                y: bot.yy + s - c,
-            };
-            const rightLip = {
-                x: bot.xx + c - s + 2 * Math.cos(mid),
-                y: bot.yy + s + c + 2 * Math.sin(mid),
-            };
-            // left angle
-            var tmp = canvas.fastAtan2(
-                Math.round(f.yy - leftLip.y),
-                Math.round(f.xx - leftLip.x));
-            choices[1] = {
-                ang: tmp,
-                da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
-            };
-            // right angle
-            tmp = canvas.fastAtan2(
-                Math.round(f.yy - rightLip.y),
-                Math.round(f.xx - rightLip.x));
-            choices[2] = {
-                ang: tmp,
-                da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
-            };
-
-            choices.sort(sortby.ascDa);
-            return choices[0].ang;
-        },
-
         // Adds and scores foodAngles.
         addFoodAngle: function(f) {
-            const ang = glut.getFoodAng(f);
+            const ang = canvas.fastAtan2(
+                Math.round(f.yy - bot.yy),
+                Math.round(f.xx - bot.xx));
             const aIndex = bot.getAngleIndex(ang);
 
             bot.injectDistance2(f);
