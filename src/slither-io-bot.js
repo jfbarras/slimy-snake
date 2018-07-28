@@ -373,11 +373,52 @@ var glut = window.glut = (function(window) {
         foodAngles: [],
         currentFood: {},
 
-        // Adds and scores foodAngles.
-        addFoodAngle: function(f) {
-            const ang = canvas.fastAtan2(
+        // Checks which angle is best to get to this food.
+        getFoodAng: function(f) {
+            var choices = [];
+            // mid angle
+            const mid = canvas.fastAtan2(
                 Math.round(f.yy - bot.yy),
                 Math.round(f.xx - bot.xx));
+            choices[0] = {
+                ang: mid,
+                da: Math.abs(canvas.angleBetween(mid, window.snake.ehang))
+            };
+            // adapt some getHeadCircle code
+            const s = Math.sin(mid) * bot.snakeWidth * 0.707;
+            const c = Math.cos(mid) * bot.snakeWidth * 0.707;
+            const leftLip = {
+                x: bot.xx + c + s,
+                y: bot.yy + s - c,
+            };
+            const rightLip = {
+                x: bot.xx + c - s + 2 * Math.cos(mid),
+                y: bot.yy + s + c + 2 * Math.sin(mid),
+            };
+            // left angle
+            var tmp = canvas.fastAtan2(
+                Math.round(f.yy - leftLip.y),
+                Math.round(f.xx - leftLip.x));
+            choices[1] = {
+                ang: tmp,
+                da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
+            };
+            // right angle
+            tmp = canvas.fastAtan2(
+                Math.round(f.yy - rightLip.y),
+                Math.round(f.xx - rightLip.x));
+            choices[2] = {
+                ang: tmp,
+                da: Math.abs(canvas.angleBetween(tmp, window.snake.ehang))
+            };
+
+            choices.sort(sortby.ascDa);
+            return choices[0].ang;
+        },
+
+        // Adds and scores foodAngles.
+        addFoodAngle: function(f) {
+            const ang = glut.getFoodAng(f);
             const aIndex = bot.getAngleIndex(ang);
 
             bot.injectDistance2(f);
@@ -389,7 +430,7 @@ var glut = window.glut = (function(window) {
             const nx = Math.round(bot.xx + fdistance * Math.cos(ang));
             const ny = Math.round(bot.yy + fdistance * Math.sin(ang));
 
-            if (f.sz > 10 || fdistance < bot.snakeWidth * 10) {
+            if (fdistance > bot.snakeWidth * 2 || fdistance < bot.snakeWidth * 10) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
                         x: nx,
@@ -414,6 +455,15 @@ var glut = window.glut = (function(window) {
             }
         },
 
+        // Checks if the snake should turn towards the provided foodAngle.
+        signCheck(fa) {
+            if (glut.currentFood.da === undefined) return true;
+            const da = glut.currentFood.da;
+            const sameSign = (fa.da < 0 && da < 0) || (fa.da > 0 && da > 0);
+            const small = Math.abs(canvas.angleBetween(fa.da, da)) < bot.opt.arcSize / 2;
+            return sameSign || small;
+        },
+
         // Scans for food.
         scan: function() {
             glut.foodAngles = [];
@@ -431,15 +481,15 @@ var glut = window.glut = (function(window) {
             for (let i = 0; i < glut.foodAngles.length; i++) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
                     const fa = glut.foodAngles[i];
-
+                    if (fa.distance > Math.pow(2 * bot.snakeWidth, 2) && glut.signCheck(fa)) {
                         glut.currentFood = {
                             x: fa.x,
                             y: fa.y,
                             sz: fa.sz,
                             da: fa.da
                         };
-
-                    break;
+                        break;
+                    }
                 }
             }
 
@@ -452,6 +502,10 @@ var glut = window.glut = (function(window) {
                         y: glut.currentFood.y
                     },
                     'blue');
+            }
+
+            if (window.logDebugging) {
+                actuator.setMouseCoordinates(convert.mapToMouse(glut.currentFood));
             }
         }
     };
