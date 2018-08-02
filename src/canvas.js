@@ -21,11 +21,10 @@ var convert = window.convert = (function(window) {
 
         // Converts Map coordinates to Canvas cordinates.
         mapToCanvas: function(point) {
-            var c = {
+            return {
                 x: window.mww2 + (point.x - window.view_xx) * window.gsc,
                 y: window.mhh2 + (point.y - window.view_yy) * window.gsc
             };
-            return c;
         },
 
         // Converts Map circle to Canvas circle.
@@ -76,17 +75,15 @@ var canvas = window.canvas = (function(window) {
     return {
         // Approximates the value of the arc tangent of y/ x.
         fastAtan2: function(y, x) {
-            const QPI = Math.PI / 4;
-            const TQPI = 3 * Math.PI / 4;
             var r = 0.0;
             var angle = 0.0;
             var abs_y = Math.abs(y) + 1e-10; // kludge to prevent 0/0 condition
             if (x < 0) {
                 r = (x + abs_y) / (abs_y - x);
-                angle = TQPI;
+                angle = 3 * Math.PI / 4;
             } else {
                 r = (x - abs_y) / (x + abs_y);
-                angle = QPI;
+                angle = Math.PI / 4;
             }
             angle += (0.1963 * r * r - 0.9817) * r;
             if (y < 0) {
@@ -187,7 +184,7 @@ var pencil = window.pencil = (function(window) {
             context.restore();
         },
 
-        // Draws a sector (angle + arc), a pie slice.
+        // Draws a sector (angle + arc = a pie slice) centered on the canvas.
         // @param {number} start -- where to start the angle
         // @param {number} end -- where to end the angle
         drawAngle: function(start, end, arcradius, color, fill, alpha) {
@@ -228,6 +225,5 @@ var pencil = window.pencil = (function(window) {
             context.stroke();
             context.restore();
         }
-
     };
 })(window);

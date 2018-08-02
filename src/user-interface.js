@@ -1,11 +1,13 @@
 
+/* jshint esversion: 6 */
+
 var userInterface = window.userInterface = (function(window, document) {
     // Saves original slither.io functions so they can be modified, or reenabled.
-    var original_keydown = document.onkeydown;
-    var original_onmouseDown = window.onmousedown;
-    var original_oef = window.oef;
-    var original_redraw = window.redraw;
-    var original_onmousemove = window.onmousemove;
+    const original_keydown = document.onkeydown;
+    const original_onmouseDown = window.onmousedown;
+    const original_oef = window.oef;
+    const original_redraw = window.redraw;
+    const original_onmousemove = window.onmousemove;
 
     window.oef = function() {};
     window.redraw = function() {};
@@ -16,7 +18,8 @@ var userInterface = window.userInterface = (function(window, document) {
         hiddenOverlays: false,
 
         initOverlays: function() {
-            // Prepares a bottom-right element. Gets refreshed every frame.
+            // Prepares a bottom-right element.
+            // Holds frame rate, XY position, width, direction, speed.
             var botOverlay = document.createElement('div');
             botOverlay.style.position = 'fixed';
             botOverlay.style.right = '5px';
@@ -32,7 +35,8 @@ var userInterface = window.userInterface = (function(window, document) {
             botOverlay.className = 'nsi';
             document.body.appendChild(botOverlay);
 
-            // Prepares a top-left element. Gets refreshed on key-press.
+            // Prepares a top-left element.
+            // Holds the state of options, like mobile render and visual debugging.
             var prefOverlay = document.createElement('div');
             prefOverlay.style.position = 'fixed';
             prefOverlay.style.left = '10px';
@@ -48,7 +52,8 @@ var userInterface = window.userInterface = (function(window, document) {
             prefOverlay.className = 'nsi';
             document.body.appendChild(prefOverlay);
 
-            // Prepares a mid-left element. Holds past scores.
+            // Prepares a mid-left element.
+            // Holds past scores.
             var statsOverlay = document.createElement('div');
             statsOverlay.style.position = 'fixed';
             statsOverlay.style.left = '10px';
@@ -119,7 +124,7 @@ var userInterface = window.userInterface = (function(window, document) {
         },
 
         // Loads a variable from local storage.
-        loadPreference: function(preference, defaultVar) {
+        loadPreference: function(preference, defaultVal) {
             var savedItem = window.localStorage.getItem(preference);
             if (savedItem !== null) {
                 if (savedItem === 'true') {
@@ -131,7 +136,7 @@ var userInterface = window.userInterface = (function(window, document) {
                 }
                 window.log('Setting found for ' + preference + ': ' + window[preference]);
             } else {
-                window[preference] = defaultVar;
+                window[preference] = defaultVal;
                 window.log('No setting found for ' + preference +
                     '. Used default: ' + window[preference]);
             }
@@ -139,16 +144,12 @@ var userInterface = window.userInterface = (function(window, document) {
             return window[preference];
         },
 
-        // Saves username when you click on "Play" button.
+        // Saves the player's username when the "Play" button is clicked.
         playButtonClickListener: function() {
-            userInterface.saveNick();
-            userInterface.loadPreference('autoRespawn', false);
-        },
-
-        // Preserves the player's nickname.
-        saveNick: function() {
             var nick = document.getElementById('nick').value;
             userInterface.savePreference('savedNick', nick);
+
+            userInterface.loadPreference('autoRespawn', false);
         },
 
         // Stores FPS data.
