@@ -21,6 +21,9 @@ This is mostly me tinkering with this bot, but I'll be attemping to:
 - Turn features on/off, off/low/med/high.
 - Give the player control over what happens.
 
+#### Metaphor ####
+In a "Motorsport Manager" game, you'd choose your driver's driving style (attack/back up) and engine mode (high/low). This would have an impact on tire wear and fuel use. I'd like to introduce this general concept to slither.io through this mod.
+
 ## Repieced Features
 Zoom with mouse wheel; reset with **Z**. Zoom does not creep back to default; it is maintained to desired level.
 
@@ -44,8 +47,6 @@ You can conserve resources (and therefore run more bots) by enabling "no graphic
 
 Bot modules detect: 1. the outer wall, 2. actual and predicted enemy snake head positions, and 3. enemy body parts.
 
-Bot can find the best angle for food.
-
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
 
@@ -61,6 +62,8 @@ Press **B** to turn snake into a ball. Use numpad +/- to increase/decrease ball 
 
 ## Improved Features
 Bot can find the best angle for avoidance: the largest sector, the closest angle, that has no collision. TODO: What about when snake is fully encircled?
+
+Bot can find the best angle for food: the smallest heading correction to the closest (but reachable) food particle, behind which there's the most food.
 
 ## Controls
 Key | Result

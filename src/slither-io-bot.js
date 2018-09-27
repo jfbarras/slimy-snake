@@ -10,7 +10,7 @@ var actuator = window.actuator = (function(window) {
             window.ym = point.y;
         },
 
-        // Changes heading to ang.
+        // Changes heading TO ang.
         changeHeadingAbs: function(angle) {
             const goal = {
                 x: Math.round(bot.xx + bot.stdBubble * Math.cos(angle)),
@@ -19,7 +19,7 @@ var actuator = window.actuator = (function(window) {
             actuator.setMouseCoordinates(convert.mapToMouse(goal));
         },
 
-        // Changes heading by ang.
+        // Changes heading BY ang. Makes a left turn when given +π/2.
         changeHeadingRel: function(angle) {
             const heading = {
                 x: bot.xx + bot.stdBubble * bot.cos,
@@ -186,7 +186,7 @@ var wall = window.wall = (function(window) {
             // number of wall segments modelled; expects odd number
             segments: 7,
             // how close together the wall segments are modelled, in radians
-            arc: 0.004363
+            arc: Math.PI / 720
         },
         MID_X: 0,
         MID_Y: 0,

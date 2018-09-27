@@ -44,7 +44,7 @@ var convert = window.convert = (function(window) {
     };
 })(window);
 
-// Helps with building shapes.
+// Helps with building shapes. Rounds positions and dimensions.
 var shapes = window.shapes = (function(window) {
     return {
         // Constructs a rectangle.
