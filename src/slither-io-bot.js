@@ -1,6 +1,7 @@
 
 /* jshint esversion: 6 */
 
+// Allows the bot to perform actions.
 var actuator = window.actuator = (function(window) {
     return {
         // Spoofs moving the mouse to the provided coordinates.
@@ -9,7 +10,7 @@ var actuator = window.actuator = (function(window) {
             window.ym = point.y;
         },
 
-        // Changes heading to ang.
+        // Changes heading TO ang.
         changeHeadingAbs: function(angle) {
             const goal = {
                 x: Math.round(bot.xx + bot.stdBubble * Math.cos(angle)),
@@ -18,7 +19,7 @@ var actuator = window.actuator = (function(window) {
             actuator.setMouseCoordinates(convert.mapToMouse(goal));
         },
 
-        // Changes heading by ang.
+        // Changes heading BY ang. Makes a left turn when given +π/2.
         changeHeadingRel: function(angle) {
             const heading = {
                 x: bot.xx + bot.stdBubble * bot.cos,
@@ -83,7 +84,7 @@ var head = window.head = (function(window) {
                 const s = window.snakes[snake];
                 const snakeRadius = bot.getSnakeWidth(s.sc) / 2;
                 const sSpMult = Math.min(1, s.sp / 5.78 - 0.2);
-                const sRadius = (bot.snakeRadius * 1.7 + snakeRadius / 2) * sSpMult * head.opt.mult;
+                const sRadius = (1.7 * bot.snakeRadius + snakeRadius / 2) * sSpMult * head.opt.mult;
 
                 obs = {
                     xx: s.xx + Math.cos(s.ehang) * sRadius * 0.75,
@@ -133,6 +134,7 @@ var part = window.part = (function(window) {
             mult: 10 / 10,
         },
 
+        // Checks if a snake part is inside the normally visible window.
         isInBox: function(s, pts) {
             const sectorSide = Math.floor(Math.sqrt(window.sectors.length)) * window.sector_size;
             const sectorBox = shapes.rect(
@@ -161,7 +163,7 @@ var part = window.part = (function(window) {
                 bot.injectDistance2(obs);
                 wuss.addCollisionAngle(obs);
 
-                if (obs.distance <= Math.pow((5 * bot.snakeRadius) + obs.bubble, 2)) {
+                if (obs.distance <= Math.pow(5 * bot.snakeRadius + obs.bubble, 2)) {
                     wuss.collisionPoints.push(obs);
 
                     if (window.visualDebugging > 1) {
@@ -184,18 +186,19 @@ var wall = window.wall = (function(window) {
             // number of wall segments modelled; expects odd number
             segments: 7,
             // how close together the wall segments are modelled, in radians
-            arc: 0.004363
+            arc: Math.PI / 720
         },
         MID_X: 0,
         MID_Y: 0,
         MAP_R: 0,
         MIN_D: 0,
 
+        // Checks how far from center, the snake is.
         isWallClose: function() {
             if (wall.MID_X !== window.grd) {
                 wall.MID_X = window.grd;
                 wall.MID_Y = window.grd;
-                wall.MAP_R = window.grd * 0.98;
+                wall.MAP_R = 0.98 * window.grd;
                 wall.MIN_D = Math.pow(wall.MAP_R - wall.opt.distance, 2);
             }
             const dist = canvas.getDistance2(wall.MID_X, wall.MID_Y, bot.xx, bot.yy);
@@ -327,7 +330,7 @@ var wuss = window.wuss = (function(window) {
                 Math.sqrt(sp.distance) - sp.bubble, 2));
 
             if (wuss.collisionAngles[aIndex] === undefined ||
-                wuss.collisionAngles[aIndex].distance > sp.distance) {
+                actualDistance < wuss.collisionAngles[aIndex].distance) {
                 wuss.collisionAngles[aIndex] = {
                     x: Math.round(sp.xx),
                     y: Math.round(sp.yy),
@@ -367,7 +370,7 @@ var wuss = window.wuss = (function(window) {
     };
 })(window);
 
-// Sees food
+// Sees food.
 var glut = window.glut = (function(window) {
     return {
         foodAngles: [],
@@ -422,7 +425,7 @@ var glut = window.glut = (function(window) {
             const aIndex = bot.getAngleIndex(ang);
 
             bot.injectDistance2(f);
-            // reject food beyond obstacles
+            // Rejects food beyond obstacles.
             if (wuss.collisionAngles[aIndex] !== undefined &&
               f.distance > wuss.collisionAngles[aIndex].distance) return;
 
@@ -430,7 +433,7 @@ var glut = window.glut = (function(window) {
             const nx = Math.round(bot.xx + fdistance * Math.cos(ang));
             const ny = Math.round(bot.yy + fdistance * Math.sin(ang));
 
-            if (fdistance > bot.snakeWidth * 2 || fdistance < bot.snakeWidth * 10) {
+            if (fdistance > 2 * bot.snakeWidth || fdistance < 10 * bot.snakeWidth) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
                         x: nx,
@@ -444,7 +447,7 @@ var glut = window.glut = (function(window) {
                 } else {
                     glut.foodAngles[aIndex].sz += f.sz;
                     glut.foodAngles[aIndex].score += f.sz / f.distance;
-                    if (glut.foodAngles[aIndex].distance > f.distance) {
+                    if (f.distance < glut.foodAngles[aIndex].distance) {
                         glut.foodAngles[aIndex].x = nx;
                         glut.foodAngles[aIndex].y = ny;
                         glut.foodAngles[aIndex].ang = ang;
@@ -504,6 +507,7 @@ var glut = window.glut = (function(window) {
                     'blue');
             }
 
+            //TEMP logDebugging (letter 'U') enables eating food
             if (window.logDebugging) {
                 actuator.setMouseCoordinates(convert.mapToMouse(glut.currentFood));
             }
@@ -527,7 +531,7 @@ var bot = window.bot = (function(window) {
 
         getSnakeWidth: function(sc) {
             if (sc === undefined) sc = window.snake.sc;
-            return Math.round(sc * 29.0);
+            return Math.round(29.0 * sc);
         },
 
         getSnakeLength: function(s) {
