@@ -33,9 +33,9 @@ Mobile rendering, **good when experiencing lag**, can be toggled with **O**.
 
 Preferences, like mobile rendering, are displayed in an overlay, in the top left quadrant.
 
-{Code} Messages can be written to the development console **(F12)**. This logging can be toggled with **U**.
+Code-level debug messages can be written to the development console **(F12)**. This logging can be toggled with **U**.
 
-Preferences, like logging, can be persisted across reboots.
+Preferences, like logging, are persisted across reboots.
 
 Overlays, like preferences or FPS, can be toggled with **H**.
 
@@ -78,7 +78,7 @@ B | Ball mode
 +/- | Increase/decrease ball size
 Space | Speed boost
 
-&nbsp; | numpad | &nbsp;
+&nbsp; | Numpad | &nbsp;
 -------|--------|--------
 northwest	| north | northeast
 west | &nbsp; | east
