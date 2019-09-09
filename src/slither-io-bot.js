@@ -375,6 +375,7 @@ var glut = window.glut = (function(window) {
     return {
         foodAngles: [],
         currentFood: {},
+        eating: false,
 
         // Checks which angle is best to get to this food.
         getFoodAng: function(f) {
@@ -510,11 +511,23 @@ var glut = window.glut = (function(window) {
                     },
                     'blue');
             }
+        },
 
-            //TEMP logDebugging (letter 'U') enables eating food
-            if (window.logDebugging) {
-                actuator.setMouseCoordinates(convert.mapToMouse(glut.currentFood));
+        run: function() {
+            if (glut.actionTimeout !== undefined) return;
+            if (glut.eating) {
+                glut.actionTimeout = window.setTimeout(glut.actionTimer, 50);
             }
+        },
+
+        actionTimer: function() {
+            if (bot.isAlive()) {
+                if (glut.eating) {
+                    glut.scan();
+                    actuator.setMouseCoordinates(convert.mapToMouse(glut.currentFood));
+                }
+            }
+            glut.actionTimeout = undefined;
         }
     };
 })(window);
@@ -614,7 +627,7 @@ var bot = window.bot = (function(window) {
         go: function() {
             bot.every();
             wuss.scan();
-            glut.scan();
+            glut.run();
             baller.run();
         }
     };

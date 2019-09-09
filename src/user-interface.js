@@ -220,6 +220,10 @@ var userInterface = window.userInterface = (function(window, document) {
             if (e.keyCode === 109) {
                 baller.offset--;
             }
+            // Allows letter 'T' to toggle eating
+            if (e.keyCode === 84) {
+                glut.eating = !glut.eating;
+            }
             userInterface.onPrefChange();
         },
 
@@ -257,6 +261,7 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
             oContent.push('[U] log debugging: ' + ht(window.logDebugging));
             oContent.push('[Y] visual debugging: ' + userInterface.fourClassTC(window.visualDebugging));
+            oContent.push('[T] eating: ' + ht(baller.eating));
             oContent.push('[B] baller: ' + baller.getInfo());
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
