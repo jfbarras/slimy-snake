@@ -273,7 +273,7 @@ var wuss = window.wuss = (function(window) {
         oscillate: function(i, base, max) {
             if (base === undefined) base = bot.getAngleIndex(window.snake.ehang);
             if (max === undefined) max = bot.MAXARC;
-            var j;
+            let j;
             if (i === 0) {
                 j = 0;
             } else if (i % 2) {
@@ -399,7 +399,7 @@ var glut = window.glut = (function(window) {
                 y: bot.yy + s + c + 2 * Math.sin(mid),
             };
             // left angle
-            var tmp = canvas.fastAtan2(
+            let tmp = canvas.fastAtan2(
                 Math.round(f.yy - leftLip.y),
                 Math.round(f.xx - leftLip.x));
             choices[1] = {
@@ -430,10 +430,14 @@ var glut = window.glut = (function(window) {
               f.distance > wuss.collisionAngles[aIndex].distance) return;
 
             const fdistance = Math.sqrt(f.distance);
+
+            // Rejects food that is too close. (Can't turn this sharp.)
+            if (fdistance < 5 * bot.snakeRadius) return;
+
             const nx = Math.round(bot.xx + fdistance * Math.cos(ang));
             const ny = Math.round(bot.yy + fdistance * Math.sin(ang));
 
-            if (fdistance > 2 * bot.snakeWidth || fdistance < 10 * bot.snakeWidth) {
+            if (f.sz > 10 || fdistance < 10 * bot.snakeWidth) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
                         x: nx,
@@ -459,7 +463,7 @@ var glut = window.glut = (function(window) {
         },
 
         // Checks if the snake should turn towards the provided foodAngle.
-        signCheck(fa) {
+        signCheck: function(fa) {
             if (glut.currentFood.da === undefined) return true;
             const da = glut.currentFood.da;
             const sameSign = (fa.da < 0 && da < 0) || (fa.da > 0 && da > 0);
@@ -484,7 +488,7 @@ var glut = window.glut = (function(window) {
             for (let i = 0; i < glut.foodAngles.length; i++) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
                     const fa = glut.foodAngles[i];
-                    if (fa.distance > Math.pow(2 * bot.snakeWidth, 2) && glut.signCheck(fa)) {
+                    if (glut.signCheck(fa)) {
                         glut.currentFood = {
                             x: fa.x,
                             y: fa.y,

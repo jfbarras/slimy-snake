@@ -58,7 +58,7 @@ var userInterface = window.userInterface = (function(window, document) {
             statsOverlay.style.position = 'fixed';
             statsOverlay.style.left = '10px';
             statsOverlay.style.top = '295px';
-            statsOverlay.style.width = '140px';
+            statsOverlay.style.width = '200px';
             statsOverlay.style.height = '210px';
             statsOverlay.style.color = '#C0C0C0';
             statsOverlay.style.fontFamily = 'Consolas, Verdana';
