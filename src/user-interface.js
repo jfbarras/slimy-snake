@@ -211,6 +211,7 @@ var userInterface = window.userInterface = (function(window, document) {
             // Allows letter 'B' to toggle ball mode.
             if (e.keyCode === 66) {
                 baller.mode = !baller.mode;
+                window.log('Baller mode set to: ' + baller.mode);
             }
             // Allows numpad '+' to incr ball size, by incr delay between turns.
             if (e.keyCode === 107) {
@@ -223,6 +224,7 @@ var userInterface = window.userInterface = (function(window, document) {
             // Allows letter 'T' to toggle eating
             if (e.keyCode === 84) {
                 glut.eating = !glut.eating;
+                window.log('Eating set to: ' + glut.eating);
             }
             userInterface.onPrefChange();
         },
@@ -261,7 +263,7 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
             oContent.push('[U] log debugging: ' + ht(window.logDebugging));
             oContent.push('[Y] visual debugging: ' + userInterface.fourClassTC(window.visualDebugging));
-            oContent.push('[T] eating: ' + ht(baller.eating));
+            oContent.push('[T] eating: ' + ht(glut.eating));
             oContent.push('[B] baller: ' + baller.getInfo());
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');

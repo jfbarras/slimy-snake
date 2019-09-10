@@ -373,6 +373,10 @@ var wuss = window.wuss = (function(window) {
 // Sees food.
 var glut = window.glut = (function(window) {
     return {
+        opt: {
+            // how many frames per food check
+            frames: 4,
+        },
         foodAngles: [],
         currentFood: {},
         eating: false,
@@ -437,6 +441,8 @@ var glut = window.glut = (function(window) {
 
             const nx = Math.round(bot.xx + fdistance * Math.cos(ang));
             const ny = Math.round(bot.yy + fdistance * Math.sin(ang));
+            const da = canvas.angleBetween(ang, window.snake.ehang);
+            const div = f.distance + (2 * bot.snakeWidth * Math.abs(da));
 
             if (f.sz > 10 || fdistance < 10 * bot.snakeWidth) {
                 if (glut.foodAngles[aIndex] === undefined) {
@@ -444,19 +450,19 @@ var glut = window.glut = (function(window) {
                         x: nx,
                         y: ny,
                         ang: ang,
-                        da: canvas.angleBetween(ang, window.snake.ehang),
+                        da: da,
                         distance: f.distance,
                         sz: f.sz,
-                        score: f.sz / f.distance
+                        score: f.sz / div
                     };
                 } else {
                     glut.foodAngles[aIndex].sz += f.sz;
-                    glut.foodAngles[aIndex].score += f.sz / f.distance;
+                    glut.foodAngles[aIndex].score += f.sz / div;
                     if (f.distance < glut.foodAngles[aIndex].distance) {
                         glut.foodAngles[aIndex].x = nx;
                         glut.foodAngles[aIndex].y = ny;
                         glut.foodAngles[aIndex].ang = ang;
-                        glut.foodAngles[aIndex].da = canvas.angleBetween(ang, window.snake.ehang);
+                        glut.foodAngles[aIndex].da = da;
                         glut.foodAngles[aIndex].distance = f.distance;
                     }
                 }
@@ -468,7 +474,7 @@ var glut = window.glut = (function(window) {
             if (glut.currentFood.da === undefined) return true;
             const da = glut.currentFood.da;
             const sameSign = (fa.da < 0 && da < 0) || (fa.da > 0 && da > 0);
-            const small = Math.abs(canvas.angleBetween(fa.da, da)) < bot.opt.arcSize / 2;
+            const small = Math.abs(fa.da) < bot.opt.arcSize / 2;
             return sameSign || small;
         },
 
@@ -516,7 +522,8 @@ var glut = window.glut = (function(window) {
         run: function() {
             if (glut.actionTimeout !== undefined) return;
             if (glut.eating) {
-                glut.actionTimeout = window.setTimeout(glut.actionTimer, 50);
+                const delay = (1000 / bot.opt.targetFps) * glut.opt.frames;
+                glut.actionTimeout = window.setTimeout(glut.actionTimer, delay);
             }
         },
 
