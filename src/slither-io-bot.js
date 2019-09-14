@@ -273,7 +273,7 @@ var wuss = window.wuss = (function(window) {
         oscillate: function(i, base, max) {
             if (base === undefined) base = bot.getAngleIndex(window.snake.ehang);
             if (max === undefined) max = bot.MAXARC;
-            var j;
+            let j;
             if (i === 0) {
                 j = 0;
             } else if (i % 2) {
@@ -373,8 +373,13 @@ var wuss = window.wuss = (function(window) {
 // Sees food.
 var glut = window.glut = (function(window) {
     return {
+        opt: {
+            // how many frames per food check
+            frames: 4,
+        },
         foodAngles: [],
         currentFood: {},
+        eating: false,
 
         // Checks which angle is best to get to this food.
         getFoodAng: function(f) {
@@ -399,7 +404,7 @@ var glut = window.glut = (function(window) {
                 y: bot.yy + s + c + 2 * Math.sin(mid),
             };
             // left angle
-            var tmp = canvas.fastAtan2(
+            let tmp = canvas.fastAtan2(
                 Math.round(f.yy - leftLip.y),
                 Math.round(f.xx - leftLip.x));
             choices[1] = {
@@ -430,28 +435,34 @@ var glut = window.glut = (function(window) {
               f.distance > wuss.collisionAngles[aIndex].distance) return;
 
             const fdistance = Math.sqrt(f.distance);
+
+            // Rejects food that is too close. (Can't turn this sharp.)
+            if (fdistance < 5 * bot.snakeRadius) return;
+
             const nx = Math.round(bot.xx + fdistance * Math.cos(ang));
             const ny = Math.round(bot.yy + fdistance * Math.sin(ang));
+            const da = canvas.angleBetween(ang, window.snake.ehang);
+            const div = f.distance + (2 * bot.snakeWidth * Math.abs(da));
 
-            if (fdistance > 2 * bot.snakeWidth || fdistance < 10 * bot.snakeWidth) {
+            if (f.sz > 10 || fdistance < 10 * bot.snakeWidth) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
                         x: nx,
                         y: ny,
                         ang: ang,
-                        da: canvas.angleBetween(ang, window.snake.ehang),
+                        da: da,
                         distance: f.distance,
                         sz: f.sz,
-                        score: f.sz / f.distance
+                        score: f.sz / div
                     };
                 } else {
                     glut.foodAngles[aIndex].sz += f.sz;
-                    glut.foodAngles[aIndex].score += f.sz / f.distance;
+                    glut.foodAngles[aIndex].score += f.sz / div;
                     if (f.distance < glut.foodAngles[aIndex].distance) {
                         glut.foodAngles[aIndex].x = nx;
                         glut.foodAngles[aIndex].y = ny;
                         glut.foodAngles[aIndex].ang = ang;
-                        glut.foodAngles[aIndex].da = canvas.angleBetween(ang, window.snake.ehang);
+                        glut.foodAngles[aIndex].da = da;
                         glut.foodAngles[aIndex].distance = f.distance;
                     }
                 }
@@ -459,11 +470,11 @@ var glut = window.glut = (function(window) {
         },
 
         // Checks if the snake should turn towards the provided foodAngle.
-        signCheck(fa) {
+        signCheck: function(fa) {
             if (glut.currentFood.da === undefined) return true;
             const da = glut.currentFood.da;
             const sameSign = (fa.da < 0 && da < 0) || (fa.da > 0 && da > 0);
-            const small = Math.abs(canvas.angleBetween(fa.da, da)) < bot.opt.arcSize / 2;
+            const small = Math.abs(fa.da) < bot.opt.arcSize / 2;
             return sameSign || small;
         },
 
@@ -484,7 +495,7 @@ var glut = window.glut = (function(window) {
             for (let i = 0; i < glut.foodAngles.length; i++) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
                     const fa = glut.foodAngles[i];
-                    if (fa.distance > Math.pow(2 * bot.snakeWidth, 2) && glut.signCheck(fa)) {
+                    if (glut.signCheck(fa)) {
                         glut.currentFood = {
                             x: fa.x,
                             y: fa.y,
@@ -506,11 +517,24 @@ var glut = window.glut = (function(window) {
                     },
                     'blue');
             }
+        },
 
-            //TEMP logDebugging (letter 'U') enables eating food
-            if (window.logDebugging) {
-                actuator.setMouseCoordinates(convert.mapToMouse(glut.currentFood));
+        run: function() {
+            if (glut.actionTimeout !== undefined) return;
+            if (glut.eating) {
+                const delay = (1000 / bot.opt.targetFps) * glut.opt.frames;
+                glut.actionTimeout = window.setTimeout(glut.actionTimer, delay);
             }
+        },
+
+        actionTimer: function() {
+            if (bot.isAlive()) {
+                if (glut.eating) {
+                    glut.scan();
+                    actuator.setMouseCoordinates(convert.mapToMouse(glut.currentFood));
+                }
+            }
+            glut.actionTimeout = undefined;
         }
     };
 })(window);
@@ -610,7 +634,7 @@ var bot = window.bot = (function(window) {
         go: function() {
             bot.every();
             wuss.scan();
-            glut.scan();
+            glut.run();
             baller.run();
         }
     };

@@ -58,7 +58,7 @@ var userInterface = window.userInterface = (function(window, document) {
             statsOverlay.style.position = 'fixed';
             statsOverlay.style.left = '10px';
             statsOverlay.style.top = '295px';
-            statsOverlay.style.width = '140px';
+            statsOverlay.style.width = '200px';
             statsOverlay.style.height = '210px';
             statsOverlay.style.color = '#C0C0C0';
             statsOverlay.style.fontFamily = 'Consolas, Verdana';
@@ -211,6 +211,7 @@ var userInterface = window.userInterface = (function(window, document) {
             // Allows letter 'B' to toggle ball mode.
             if (e.keyCode === 66) {
                 baller.mode = !baller.mode;
+                window.log('Baller mode set to: ' + baller.mode);
             }
             // Allows numpad '+' to incr ball size, by incr delay between turns.
             if (e.keyCode === 107) {
@@ -219,6 +220,11 @@ var userInterface = window.userInterface = (function(window, document) {
             // Allows numpad '-' to decr ball size, by decr delay between turns.
             if (e.keyCode === 109) {
                 baller.offset--;
+            }
+            // Allows letter 'T' to toggle eating
+            if (e.keyCode === 84) {
+                glut.eating = !glut.eating;
+                window.log('Eating set to: ' + glut.eating);
             }
             userInterface.onPrefChange();
         },
@@ -257,6 +263,7 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
             oContent.push('[U] log debugging: ' + ht(window.logDebugging));
             oContent.push('[Y] visual debugging: ' + userInterface.fourClassTC(window.visualDebugging));
+            oContent.push('[T] eating: ' + ht(glut.eating));
             oContent.push('[B] baller: ' + baller.getInfo());
 
             userInterface.overlays.prefOverlay.innerHTML = oContent.join('<br/>');
