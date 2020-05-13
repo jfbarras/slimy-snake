@@ -41,18 +41,20 @@ Overlays, like preferences or FPS, can be toggled with **H**.
 
 Statistics, like the top ten scores this session, are displayed in a mid-left overlay.
 
-Visual debugging, like food collection sector, can be changed with **Y**.
+Visual debugging, like food collection sector, can be changed with **Y** and **6**.
 
 You can conserve resources (and therefore run more bots) by enabling "no graphics mode". This is toggled with **G**.
 
 Bot modules detect: 1. the outer wall, 2. actual and predicted enemy snake head positions, and 3. enemy body parts.
+
+Snake does a decent job eating on its own. This can be toggled with **T**.
 
 ## New Features
 Statistics and visual debugging are available even if the player fully controls the snake.
 
 Four levels of visual debugging (off, low, med, high) are used to display information about the playing field.
 
-Numeric pad changes absolute heading. For example, **6** makes the snake go east.
+Numeric pad changes absolute heading. For example, numpad **6** makes the snake go east.
 
 Visual debugging includes four side circles showing the snake's turning radius.
 
@@ -68,7 +70,9 @@ Bot can find the best angle for food: the smallest heading correction to the clo
 ## Controls
 Key | Result
 :---|:---
-Y	| Visual debugging
+6	| Visual debugging module
+T | Eat mode
+Y	| Visual debugging level
 U	| Log debugging
 O | Mobile rendering
 G | Disable graphics
