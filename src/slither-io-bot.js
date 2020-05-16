@@ -78,6 +78,7 @@ var head = window.head = (function(window) {
             for (let snake = 0, ls = window.snakes.length; snake < ls; snake++) {
                 obs = undefined;
 
+                // Skips the player's snake and also dead snakes.
                 if (window.snakes[snake].id === window.snake.id ||
                     window.snakes[snake].alive_amt !== 1) continue;
 
@@ -148,13 +149,17 @@ var part = window.part = (function(window) {
             const s = window.snakes[snake];
             const snakeRadius = bot.getSnakeWidth(s.sc) / 2;
             const k = Math.ceil(snakeRadius / 15);
+
+            // Basic observation of a snake part. No (x,y) yet.
             var obs = {
                 snake: snake,
                 hardBody: snakeRadius,
                 bubble: (snakeRadius + bot.stdBubble) * part.opt.mult,
                 type: 'part'
             };
+
             for (let pts = 0, lp = s.pts.length; pts < lp; pts += k) {
+                // Skips dying and invisible parts.
                 if (s.pts[pts].dying || !part.isInBox(s, pts)) continue;
 
                 obs.xx = s.pts[pts].xx;
@@ -533,16 +538,14 @@ var glut = window.glut = (function(window) {
 
         run: function() {
             if (glut.actionTimeout !== undefined) return;
-            if (glut.eating) {
-                const delay = (1000 / bot.opt.targetFps) * glut.opt.frames;
-                glut.actionTimeout = window.setTimeout(glut.actionTimer, delay);
-            }
+            const delay = (1000 / bot.opt.targetFps) * glut.opt.frames;
+            glut.actionTimeout = window.setTimeout(glut.actionTimer, delay);
         },
 
         actionTimer: function() {
             if (bot.isAlive()) {
+                glut.scan();
                 if (glut.eating) {
-                    glut.scan();
                     actuator.setMouseCoordinates(convert.mapToMouse(glut.currentFood));
                 }
             }
