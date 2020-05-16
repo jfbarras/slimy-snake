@@ -331,17 +331,14 @@ var wuss = window.wuss = (function(window) {
                 Math.round(sp.xx - bot.xx));
             const aIndex = bot.getAngleIndex(ang);
 
-            const actualDistance = Math.round(Math.pow(
-                Math.sqrt(sp.distance) - sp.bubble, 2));
-
             if (wuss.collisionAngles[aIndex] === undefined ||
-                actualDistance < wuss.collisionAngles[aIndex].distance) {
+                sp.distance < wuss.collisionAngles[aIndex].distance) {
                 wuss.collisionAngles[aIndex] = {
                     x: Math.round(sp.xx),
                     y: Math.round(sp.yy),
                     ang: ang,
                     snake: sp.snake,
-                    distance: actualDistance,
+                    distance: sp.distance,
                     radius: sp.bubble,
                     aIndex: aIndex
                 };
@@ -447,8 +444,9 @@ var glut = window.glut = (function(window) {
             const nx = Math.round(bot.xx + fdistance * Math.cos(ang));
             const ny = Math.round(bot.yy + fdistance * Math.sin(ang));
             const da = canvas.angleBetween(ang, window.snake.ehang);
-            const div = f.distance + (2 * bot.snakeWidth * Math.abs(da));
+            const div = 3 * bot.snakeRadius * Math.abs(da) + fdistance;
 
+            // Rejects food with low score.
             if (f.sz > 10 || fdistance < 10 * bot.snakeWidth) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
@@ -523,7 +521,9 @@ var glut = window.glut = (function(window) {
                     }
                 }
             }
+        },
 
+        run: function() {
             if (tracer.check('glut', 0)) {
                 pencil.drawLine({
                         x: bot.xx,
@@ -534,9 +534,7 @@ var glut = window.glut = (function(window) {
                     },
                     'blue');
             }
-        },
 
-        run: function() {
             if (glut.actionTimeout !== undefined) return;
             const delay = (1000 / bot.opt.targetFps) * glut.opt.frames;
             glut.actionTimeout = window.setTimeout(glut.actionTimer, delay);
