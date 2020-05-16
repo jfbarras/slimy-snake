@@ -99,7 +99,7 @@ var head = window.head = (function(window) {
                 wuss.addCollisionAngle(obs);
                 wuss.collisionPoints.push(obs);
 
-                if (window.visualDebugging > 0) {
+                if (tracer.check('wuss', 1)) {
                     pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
                 }
 
@@ -116,7 +116,7 @@ var head = window.head = (function(window) {
                 wuss.addCollisionAngle(obs);
                 wuss.collisionPoints.push(obs);
 
-                if (window.visualDebugging > 0) {
+                if (tracer.check('wuss', 1)) {
                     pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
                 }
 
@@ -166,10 +166,10 @@ var part = window.part = (function(window) {
                 if (obs.distance <= Math.pow(5 * bot.snakeRadius + obs.bubble, 2)) {
                     wuss.collisionPoints.push(obs);
 
-                    if (window.visualDebugging > 1) {
+                    if (tracer.check('wuss', 1)) {
                         pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'red');
                     }
-                } else if (window.visualDebugging > 2) {
+                } else if (tracer.check('wuss', 2)) {
                     pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'orange');
                 }
             }
@@ -222,7 +222,7 @@ var wall = window.wall = (function(window) {
                 wuss.collisionPoints.push(obs);
                 wuss.addCollisionAngle(obs);
 
-                if (window.visualDebugging > 1) {
+                if (tracer.check('wuss', 1)) {
                     pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
                 }
             }
@@ -304,7 +304,7 @@ var wuss = window.wuss = (function(window) {
             if (best.idx !== undefined) {
                 const ang = best.idx * bot.opt.arcSize;
 
-                if (window.visualDebugging > 0) {
+                if (tracer.check('wuss', 0)) {
                     pencil.drawLine({
                             x: bot.xx,
                             y: bot.yy
@@ -352,7 +352,7 @@ var wuss = window.wuss = (function(window) {
             wuss.bestUndefAngle();
             wuss.collisionPoints.sort(sortby.ascDistance);
 
-            if (window.visualDebugging > 1) {
+            if (tracer.check('wuss', 1)) {
                 for (let i = 0; i < wuss.collisionAngles.length; i++) {
                     if (wuss.collisionAngles[i] !== undefined) {
                         pencil.drawLine({
@@ -495,6 +495,18 @@ var glut = window.glut = (function(window) {
             for (let i = 0; i < glut.foodAngles.length; i++) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
                     const fa = glut.foodAngles[i];
+
+                    if (tracer.check('glut', 1)) {
+                        pencil.drawLine({
+                                x: bot.xx,
+                                y: bot.yy
+                            }, {
+                                x: fa.x,
+                                y: fa.y
+                            },
+                            'DarkCyan');
+                    }
+
                     if (glut.signCheck(fa)) {
                         glut.currentFood = {
                             x: fa.x,
@@ -507,7 +519,7 @@ var glut = window.glut = (function(window) {
                 }
             }
 
-            if (window.visualDebugging > 0) {
+            if (tracer.check('glut', 0)) {
                 pencil.drawLine({
                         x: bot.xx,
                         y: bot.yy
@@ -619,7 +631,7 @@ var bot = window.bot = (function(window) {
             bot.stdBubble = 3 * bot.snakeRadius;
             bot.snakeLength = bot.getSnakeLength();
 
-            if (window.visualDebugging > 0) {
+            if (tracer.check('wuss', 0)) {
                 // coral food collection sector
                 pencil.drawAngle(window.snake.ehang - Math.PI / 4, window.snake.ehang + Math.PI / 4,
                     bot.stdBubble, 'coral', false);

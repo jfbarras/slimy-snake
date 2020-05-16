@@ -168,11 +168,15 @@ var userInterface = window.userInterface = (function(window, document) {
             // Triggers original slither.io onkeydown function.
             original_keydown(e);
             if (!window.playing) return;
-            // Allows letter 'Y' to toggle visual debugging.
+            // Allows number '6' to change tracer mode.
+            if (e.keyCode === 54) {
+                tracer.nextMode();
+                userInterface.savePreference('tracerMode', tracer.mode);
+            }
+            // Allows letter 'Y' to change tracer level.
             if (e.keyCode === 89) {
-                window.visualDebugging++;
-                if (window.visualDebugging > 3) window.visualDebugging = 0;
-                userInterface.savePreference('visualDebugging', window.visualDebugging);
+                tracer.nextLevel();
+                userInterface.savePreference('tracerLevel', tracer.level);
             }
             // Allows letter 'U' to toggle debugging to console.
             if (e.keyCode === 85) {
@@ -190,9 +194,11 @@ var userInterface = window.userInterface = (function(window, document) {
                 userInterface.toggleGfx();
                 window.log('Graphics mode set to: ' + userInterface.gfxEnabled);
                 if (userInterface.gfxEnabled) {
-                    window.visualDebugging = userInterface.loadPreference('visualDebugging', 0);
+                    tracer.mode = userInterface.loadPreference('tracerMode', 0);
+                    tracer.level = userInterface.loadPreference('tracerLevel', 0);
                 } else {
-                    window.visualDebugging = 0;
+                    tracer.mode = 0;
+                    tracer.level = 0;
                 }
             }
             // Allows letter 'O' to toggle render mode.
@@ -262,7 +268,8 @@ var userInterface = window.userInterface = (function(window, document) {
             oContent.push('version: ' + GM_info.script.version);
             oContent.push('[O] mobile rendering: ' + ht(window.mobileRender));
             oContent.push('[U] log debugging: ' + ht(window.logDebugging));
-            oContent.push('[Y] visual debugging: ' + userInterface.fourClassTC(window.visualDebugging));
+            oContent.push('[6] debugging: ' + tracer.modes[tracer.mode]);
+            oContent.push('[Y] debug level: ' + userInterface.fourClassTC(tracer.level));
             oContent.push('[T] eating: ' + ht(glut.eating));
             oContent.push('[B] baller: ' + baller.getInfo());
 
@@ -372,3 +379,27 @@ var userInterface = window.userInterface = (function(window, document) {
         }
     };
 })(window, document);
+
+var tracer = window.tracer = (function(window) {
+    return {
+        modes: ['none','wuss','glut','BOTH'],
+        mode: 0,
+        level: 0,
+
+        check: function(mo, le) {
+            if (tracer.mode === 0) return false;
+            if (tracer.mode === 3) return (tracer.level > le);
+            return (mo === tracer.modes[tracer.mode]) && (tracer.level > le);
+        },
+
+        nextMode: function() {
+            tracer.mode++;
+            if (tracer.mode > 3) tracer.mode = 0;
+        },
+
+        nextLevel: function() {
+            tracer.level++;
+            if (tracer.level > 3) tracer.level = 0;
+        }
+    };
+})(window);
