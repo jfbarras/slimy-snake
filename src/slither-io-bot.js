@@ -339,8 +339,7 @@ var wuss = window.wuss = (function(window) {
                     ang: ang,
                     snake: sp.snake,
                     distance: sp.distance,
-                    radius: sp.bubble,
-                    aIndex: aIndex
+                    radius: sp.bubble
                 };
             }
         },
@@ -474,10 +473,9 @@ var glut = window.glut = (function(window) {
 
         // Checks if the snake should turn towards the provided foodAngle.
         signCheck: function(fa) {
-            if (glut.currentFood.da === undefined) return true;
             const da = glut.currentFood.da;
             const sameSign = (fa.da < 0 && da < 0) || (fa.da > 0 && da > 0);
-            const small = Math.abs(fa.da) < bot.opt.arcSize / 2;
+            const small = Math.abs(fa.da) < bot.opt.arcSize;
             return sameSign || small;
         },
 
@@ -501,8 +499,10 @@ var glut = window.glut = (function(window) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
                     const fa = glut.foodAngles[i];
 
-                    const safe = wuss.collisionAngles[i] === undefined ||
-                        wuss.collisionAngles[i].distance > Math.pow(0.4 * bot.snakeWidth * 10, 2);
+                    const j = bot.getAngleIndex(fa.ang);
+                    const safe = wuss.collisionAngles[j] === undefined ||
+                        Math.sqrt(wuss.collisionAngles[j].distance) >
+                        Math.sqrt(fa.distance) + wuss.collisionAngles[j].radius;
 
                     if (tracer.check('glut', 1)) {
                         pencil.drawLine({
@@ -527,6 +527,17 @@ var glut = window.glut = (function(window) {
                         found = true;
                     }
                 }
+            }
+
+            // Adopts best undefined angle.
+            if (!found) {
+                const ang = wuss.bestUndefAngle();
+                glut.currentFood = {
+                    x: bot.xx + bot.stdBubble * Math.cos(ang),
+                    y: bot.yy + bot.stdBubble * Math.sin(ang),
+                    sz: 0,
+                    da: 0
+                };
             }
         },
 
