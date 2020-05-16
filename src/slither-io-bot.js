@@ -495,9 +495,14 @@ var glut = window.glut = (function(window) {
 
             glut.foodAngles.sort(sortby.desScore);
 
+            let found = false;
+
             for (let i = 0; i < glut.foodAngles.length; i++) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
                     const fa = glut.foodAngles[i];
+
+                    const safe = wuss.collisionAngles[i] === undefined ||
+                        wuss.collisionAngles[i].distance > Math.pow(0.4 * bot.snakeWidth * 10, 2);
 
                     if (tracer.check('glut', 1)) {
                         pencil.drawLine({
@@ -507,17 +512,19 @@ var glut = window.glut = (function(window) {
                                 x: fa.x,
                                 y: fa.y
                             },
-                            'DarkCyan');
+                            safe ? 'DarkCyan' : 'Red',
+                            safe ? 1 : 3
+                          );
                     }
 
-                    if (glut.signCheck(fa)) {
+                    if (!found && safe && glut.signCheck(fa)) {
                         glut.currentFood = {
                             x: fa.x,
                             y: fa.y,
                             sz: fa.sz,
                             da: fa.da
                         };
-                        break;
+                        found = true;
                     }
                 }
             }
