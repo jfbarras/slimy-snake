@@ -44,7 +44,7 @@ var actuator = window.actuator = (function(window) {
 var sortby = window.sortby = (function(window) {
     return {
         // Sorts by property 'da' ascending.
-        ascDa: function (a, b) {
+        ascDa: function(a, b) {
             return a.da - b.da;
         },
 
@@ -433,7 +433,7 @@ var glut = window.glut = (function(window) {
             bot.injectDistance2(f);
             // Rejects food beyond obstacles.
             if (wuss.collisionAngles[aIndex] !== undefined &&
-              f.distance > wuss.collisionAngles[aIndex].distance) return;
+                f.distance > wuss.collisionAngles[aIndex].distance) return;
 
             const fdistance = Math.sqrt(f.distance);
 
@@ -530,21 +530,21 @@ var glut = window.glut = (function(window) {
 
         run: function() {
             if (tracer.check('glut', 1)) {
-              for (let i = 0; i < glut.foodAngles.length; i++) {
-                if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
-                  const fa = glut.foodAngles[i];
-                  pencil.drawLine({
-                        x: bot.xx,
-                        y: bot.yy
-                    }, {
-                        x: fa.x,
-                        y: fa.y
-                    },
-                    fa.safe ? 'DarkCyan' : 'red',
-                    fa.safe ? 1 : 2
-                  );
+                for (let i = 0; i < glut.foodAngles.length; i++) {
+                    if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
+                        const fa = glut.foodAngles[i];
+                        pencil.drawLine({
+                                x: bot.xx,
+                                y: bot.yy
+                            }, {
+                                x: fa.x,
+                                y: fa.y
+                            },
+                            fa.safe ? 'DarkCyan' : 'red',
+                            fa.safe ? 1 : 2
+                        );
+                    }
                 }
-              }
             }
 
             if (tracer.check('glut', 0)) {
