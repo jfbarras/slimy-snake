@@ -14,7 +14,6 @@ var userInterface = window.userInterface = (function(window, document) {
 
     return {
         overlays: {},
-        gfxEnabled: true,
         hiddenOverlays: false,
 
         initOverlays: function() {
@@ -83,40 +82,6 @@ var userInterface = window.userInterface = (function(window, document) {
             });
         },
 
-        // Swaps the regular graphics with a black rectangle.
-        toggleGfx: function() {
-            if (userInterface.gfxEnabled) {
-                var c = window.mc.getContext('2d');
-                c.save();
-                c.fillStyle = "#000000",
-                    c.fillRect(0, 0, window.mww, window.mhh),
-                    c.restore();
-
-                var d = document.createElement('div');
-                d.style.position = 'fixed';
-                d.style.top = '50%';
-                d.style.left = '50%';
-                d.style.width = '200px';
-                d.style.height = '60px';
-                d.style.color = '#C0C0C0';
-                d.style.fontFamily = 'Consolas, Verdana';
-                d.style.zIndex = 999;
-                d.style.margin = '-30px 0 0 -100px';
-                d.style.fontSize = '20px';
-                d.style.textAlign = 'center';
-                d.className = 'nsi';
-                document.body.appendChild(d);
-                userInterface.gfxOverlay = d;
-
-                window.lbf.innerHTML = '';
-            } else {
-                document.body.removeChild(userInterface.gfxOverlay);
-                userInterface.gfxOverlay = undefined;
-            }
-
-            userInterface.gfxEnabled = !userInterface.gfxEnabled;
-        },
-
         // Saves a variable to local storage.
         savePreference: function(item, value) {
             window.localStorage.setItem(item, value);
@@ -148,8 +113,6 @@ var userInterface = window.userInterface = (function(window, document) {
         playButtonClickListener: function() {
             var nick = document.getElementById('nick').value;
             userInterface.savePreference('savedNick', nick);
-
-            userInterface.loadPreference('autoRespawn', false);
         },
 
         // Stores FPS data.
@@ -188,18 +151,6 @@ var userInterface = window.userInterface = (function(window, document) {
             if (e.keyCode === 72) {
                 userInterface.hiddenOverlays = !userInterface.hiddenOverlays;
                 userInterface.spreadOverlayVis();
-            }
-            // Allows letter 'G' to toggle graphics. Also toggles visual debugging.
-            if (e.keyCode === 71) {
-                userInterface.toggleGfx();
-                window.log('Graphics mode set to: ' + userInterface.gfxEnabled);
-                if (userInterface.gfxEnabled) {
-                    tracer.mode = userInterface.loadPreference('tracerMode', 0);
-                    tracer.level = userInterface.loadPreference('tracerLevel', 0);
-                } else {
-                    tracer.mode = 0;
-                    tracer.level = 0;
-                }
             }
             // Allows letter 'O' to toggle render mode.
             if (e.keyCode === 79) {
@@ -328,20 +279,10 @@ var userInterface = window.userInterface = (function(window, document) {
                     ' y: ' + (Math.round(goal.y) || 0));
             }
 
-            oContent.push('... ❤ ...');
+            oContent.push(' ');
 
             userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
 
-            // Displays the full-screen black overlay
-            if (userInterface.gfxOverlay) {
-                let gContent = [];
-
-                gContent.push('<b>' + window.snake.nk + '</b>');
-                gContent.push(bot.snakeLength);
-                gContent.push('[' + window.rank + '/' + window.snake_count + ']');
-
-                userInterface.gfxOverlay.innerHTML = gContent.join('<br/>');
-            }
         },
 
         // Loops.
@@ -349,9 +290,7 @@ var userInterface = window.userInterface = (function(window, document) {
             var start = Date.now();
             zoom.maintain();
             original_oef();
-            if (userInterface.gfxEnabled) {
-                original_redraw();
-            }
+            original_redraw();
 
             if (bot.isAlive()) {
                 bot.state = 'running';
