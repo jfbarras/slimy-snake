@@ -44,7 +44,7 @@ var actuator = window.actuator = (function(window) {
 var sortby = window.sortby = (function(window) {
     return {
         // Sorts by property 'da' ascending.
-        ascDa: function (a, b) {
+        ascDa: function(a, b) {
             return a.da - b.da;
         },
 
@@ -331,19 +331,15 @@ var wuss = window.wuss = (function(window) {
                 Math.round(sp.xx - bot.xx));
             const aIndex = bot.getAngleIndex(ang);
 
-            const actualDistance = Math.round(Math.pow(
-                Math.sqrt(sp.distance) - sp.bubble, 2));
-
             if (wuss.collisionAngles[aIndex] === undefined ||
-                actualDistance < wuss.collisionAngles[aIndex].distance) {
+                sp.distance < wuss.collisionAngles[aIndex].distance) {
                 wuss.collisionAngles[aIndex] = {
                     x: Math.round(sp.xx),
                     y: Math.round(sp.yy),
                     ang: ang,
                     snake: sp.snake,
-                    distance: actualDistance,
-                    radius: sp.bubble,
-                    aIndex: aIndex
+                    distance: sp.distance,
+                    radius: sp.bubble
                 };
             }
         },
@@ -437,7 +433,7 @@ var glut = window.glut = (function(window) {
             bot.injectDistance2(f);
             // Rejects food beyond obstacles.
             if (wuss.collisionAngles[aIndex] !== undefined &&
-              f.distance > wuss.collisionAngles[aIndex].distance) return;
+                f.distance > wuss.collisionAngles[aIndex].distance) return;
 
             const fdistance = Math.sqrt(f.distance);
 
@@ -447,9 +443,10 @@ var glut = window.glut = (function(window) {
             const nx = Math.round(bot.xx + fdistance * Math.cos(ang));
             const ny = Math.round(bot.yy + fdistance * Math.sin(ang));
             const da = canvas.angleBetween(ang, window.snake.ehang);
-            const div = f.distance + (2 * bot.snakeWidth * Math.abs(da));
+            const div = 3 * bot.snakeRadius * Math.abs(da) + fdistance;
 
-            if (f.sz > 10 || fdistance < 10 * bot.snakeWidth) {
+            // Rejects food with low score.
+            if (f.sz > 10 || div < 15 * bot.snakeWidth) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
                         x: nx,
@@ -476,10 +473,9 @@ var glut = window.glut = (function(window) {
 
         // Checks if the snake should turn towards the provided foodAngle.
         signCheck: function(fa) {
-            if (glut.currentFood.da === undefined) return true;
             const da = glut.currentFood.da;
             const sameSign = (fa.da < 0 && da < 0) || (fa.da > 0 && da > 0);
-            const small = Math.abs(fa.da) < bot.opt.arcSize / 2;
+            const small = Math.abs(fa.da) < bot.opt.arcSize;
             return sameSign || small;
         },
 
@@ -497,11 +493,46 @@ var glut = window.glut = (function(window) {
 
             glut.foodAngles.sort(sortby.desScore);
 
+            let found = false;
+
             for (let i = 0; i < glut.foodAngles.length; i++) {
                 if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
                     const fa = glut.foodAngles[i];
 
-                    if (tracer.check('glut', 1)) {
+                    const j = bot.getAngleIndex(fa.ang);
+                    fa.safe = wuss.collisionAngles[j] === undefined ||
+                        Math.sqrt(wuss.collisionAngles[j].distance) >
+                        Math.sqrt(fa.distance) + wuss.collisionAngles[j].radius;
+
+                    if (!found && fa.safe && glut.signCheck(fa)) {
+                        glut.currentFood = {
+                            x: fa.x,
+                            y: fa.y,
+                            sz: fa.sz,
+                            da: fa.da
+                        };
+                        found = true;
+                    }
+                }
+            }
+
+            // Adopts best undefined angle.
+            if (!found) {
+                const ang = wuss.bestUndefAngle();
+                glut.currentFood = {
+                    x: bot.xx + bot.stdBubble * Math.cos(ang),
+                    y: bot.yy + bot.stdBubble * Math.sin(ang),
+                    sz: 0,
+                    da: 0
+                };
+            }
+        },
+
+        run: function() {
+            if (tracer.check('glut', 1)) {
+                for (let i = 0; i < glut.foodAngles.length; i++) {
+                    if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
+                        const fa = glut.foodAngles[i];
                         pencil.drawLine({
                                 x: bot.xx,
                                 y: bot.yy
@@ -509,17 +540,9 @@ var glut = window.glut = (function(window) {
                                 x: fa.x,
                                 y: fa.y
                             },
-                            'DarkCyan');
-                    }
-
-                    if (glut.signCheck(fa)) {
-                        glut.currentFood = {
-                            x: fa.x,
-                            y: fa.y,
-                            sz: fa.sz,
-                            da: fa.da
-                        };
-                        break;
+                            fa.safe ? 'DarkCyan' : 'red',
+                            fa.safe ? 1 : 2
+                        );
                     }
                 }
             }
@@ -532,11 +555,9 @@ var glut = window.glut = (function(window) {
                         x: glut.currentFood.x,
                         y: glut.currentFood.y
                     },
-                    'blue');
+                    'cyan');
             }
-        },
 
-        run: function() {
             if (glut.actionTimeout !== undefined) return;
             const delay = (1000 / bot.opt.targetFps) * glut.opt.frames;
             glut.actionTimeout = window.setTimeout(glut.actionTimer, delay);
@@ -634,7 +655,7 @@ var bot = window.bot = (function(window) {
             bot.stdBubble = 3 * bot.snakeRadius;
             bot.snakeLength = bot.getSnakeLength();
 
-            if (tracer.check('wuss', 0)) {
+            if (tracer.level > 0) {
                 // coral food collection sector
                 pencil.drawAngle(window.snake.ehang - Math.PI / 4, window.snake.ehang + Math.PI / 4,
                     bot.stdBubble, 'coral', false);
