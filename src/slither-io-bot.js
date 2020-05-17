@@ -446,7 +446,7 @@ var glut = window.glut = (function(window) {
             const div = 3 * bot.snakeRadius * Math.abs(da) + fdistance;
 
             // Rejects food with low score.
-            if (f.sz > 10 || fdistance < 10 * bot.snakeWidth) {
+            if (f.sz > 10 || div < 15 * bot.snakeWidth) {
                 if (glut.foodAngles[aIndex] === undefined) {
                     glut.foodAngles[aIndex] = {
                         x: nx,
@@ -500,24 +500,11 @@ var glut = window.glut = (function(window) {
                     const fa = glut.foodAngles[i];
 
                     const j = bot.getAngleIndex(fa.ang);
-                    const safe = wuss.collisionAngles[j] === undefined ||
+                    fa.safe = wuss.collisionAngles[j] === undefined ||
                         Math.sqrt(wuss.collisionAngles[j].distance) >
                         Math.sqrt(fa.distance) + wuss.collisionAngles[j].radius;
 
-                    if (tracer.check('glut', 1)) {
-                        pencil.drawLine({
-                                x: bot.xx,
-                                y: bot.yy
-                            }, {
-                                x: fa.x,
-                                y: fa.y
-                            },
-                            safe ? 'DarkCyan' : 'Red',
-                            safe ? 1 : 3
-                          );
-                    }
-
-                    if (!found && safe && glut.signCheck(fa)) {
+                    if (!found && fa.safe && glut.signCheck(fa)) {
                         glut.currentFood = {
                             x: fa.x,
                             y: fa.y,
@@ -542,6 +529,24 @@ var glut = window.glut = (function(window) {
         },
 
         run: function() {
+            if (tracer.check('glut', 1)) {
+              for (let i = 0; i < glut.foodAngles.length; i++) {
+                if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
+                  const fa = glut.foodAngles[i];
+                  pencil.drawLine({
+                        x: bot.xx,
+                        y: bot.yy
+                    }, {
+                        x: fa.x,
+                        y: fa.y
+                    },
+                    fa.safe ? 'DarkCyan' : 'red',
+                    fa.safe ? 1 : 2
+                  );
+                }
+              }
+            }
+
             if (tracer.check('glut', 0)) {
                 pencil.drawLine({
                         x: bot.xx,
@@ -550,7 +555,7 @@ var glut = window.glut = (function(window) {
                         x: glut.currentFood.x,
                         y: glut.currentFood.y
                     },
-                    'blue');
+                    'cyan');
             }
 
             if (glut.actionTimeout !== undefined) return;
@@ -650,7 +655,7 @@ var bot = window.bot = (function(window) {
             bot.stdBubble = 3 * bot.snakeRadius;
             bot.snakeLength = bot.getSnakeLength();
 
-            if (tracer.check('wuss', 0)) {
+            if (tracer.level > 0) {
                 // coral food collection sector
                 pencil.drawAngle(window.snake.ehang - Math.PI / 4, window.snake.ehang + Math.PI / 4,
                     bot.stdBubble, 'coral', false);
