@@ -25,7 +25,7 @@ var userInterface = window.userInterface = (function(window, document) {
             botOverlay.style.right = '5px';
             botOverlay.style.bottom = '112px';
             botOverlay.style.width = '150px';
-            botOverlay.style.height = '85px';
+            botOverlay.style.height = '100px';
             botOverlay.style.color = '#C0C0C0';
             botOverlay.style.fontFamily = 'Consolas, Verdana';
             botOverlay.style.zIndex = 999;
@@ -40,7 +40,7 @@ var userInterface = window.userInterface = (function(window, document) {
             var prefOverlay = document.createElement('div');
             prefOverlay.style.position = 'fixed';
             prefOverlay.style.left = '10px';
-            prefOverlay.style.top = '75px';
+            prefOverlay.style.top = '10px';
             prefOverlay.style.width = '260px';
             prefOverlay.style.height = '210px';
             prefOverlay.style.color = '#C0C0C0';
@@ -57,7 +57,7 @@ var userInterface = window.userInterface = (function(window, document) {
             var statsOverlay = document.createElement('div');
             statsOverlay.style.position = 'fixed';
             statsOverlay.style.left = '10px';
-            statsOverlay.style.top = '295px';
+            statsOverlay.style.bottom = '100px';
             statsOverlay.style.width = '200px';
             statsOverlay.style.height = '210px';
             statsOverlay.style.color = '#C0C0C0';
@@ -318,6 +318,17 @@ var userInterface = window.userInterface = (function(window, document) {
                 'w: ' + (bot.snakeWidth || 0) + ' ' +
                 'sp: ' + userInterface.getArrow(window.snake.ehang) +
                 ' ' + Math.round(window.snake.sp*100)/100);
+
+            if (tracer.mode >= 2) {
+                // Displays the food target size, X and Y.
+                const goal = glut.currentFood;
+                oContent.push('target sz: ' + (Math.round(goal.sz) || 0));
+                oContent.push(
+                    'x: ' + (Math.round(goal.x) || 0) +
+                    ' y: ' + (Math.round(goal.y) || 0));
+            }
+
+            oContent.push('... ❤ ...');
 
             userInterface.overlays.botOverlay.innerHTML = oContent.join('<br/>');
 
