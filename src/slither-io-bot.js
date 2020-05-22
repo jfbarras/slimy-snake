@@ -79,7 +79,7 @@ var head = window.head = (function(window) {
             }
         },
 
-        seeHeads: function() {
+        scan: function() {
             var obs;
             for (let snake = 0, ls = window.snakes.length; snake < ls; snake++) {
                 obs = undefined;
@@ -123,7 +123,7 @@ var head = window.head = (function(window) {
 
                 head.draw(obs);
 
-                part.seeParts(snake);
+                part.scan(snake);
             }
         }
     };
@@ -159,7 +159,7 @@ var part = window.part = (function(window) {
             }
         },
 
-        seeParts: function(snake) {
+        scan: function(snake) {
             const s = window.snakes[snake];
             const snakeRadius = bot.getSnakeWidth(s.sc) / 2;
             const k = Math.ceil(snakeRadius / 15);
@@ -222,7 +222,7 @@ var wall = window.wall = (function(window) {
             }
         },
 
-        seeWall: function() {
+        scan: function() {
             if (!wall.isWallClose()) return;
             const midAng = canvas.fastAtan2(bot.yy - wall.MID_X, bot.xx - wall.MID_Y);
             const j = (wall.opt.segments - 1) / 2;
@@ -356,15 +356,7 @@ var wuss = window.wuss = (function(window) {
             }
         },
 
-        // Sees obstacles.
-        scan: function() {
-            wuss.collisionPoints = [];
-            wuss.collisionAngles = [];
-            head.seeHeads();
-            wall.seeWall();
-            wuss.bestUndefAngle();
-            wuss.collisionPoints.sort(sortby.ascDistance);
-
+        drawAll: function() {
             if (tracer.check('wuss', 1)) {
                 for (let i = 0; i < wuss.collisionAngles.length; i++) {
                     if (wuss.collisionAngles[i] !== undefined) {
@@ -379,6 +371,17 @@ var wuss = window.wuss = (function(window) {
                     }
                 }
             }
+        },
+
+        // Sees obstacles.
+        scan: function() {
+            wuss.collisionPoints = [];
+            wuss.collisionAngles = [];
+            head.scan();
+            wall.scan();
+            wuss.bestUndefAngle();
+            wuss.collisionPoints.sort(sortby.ascDistance);
+            wuss.drawAll();
         }
     };
 })(window);
@@ -540,7 +543,7 @@ var glut = window.glut = (function(window) {
             }
         },
 
-        run: function() {
+        drawAll: function() {
             if (tracer.check('glut', 1)) {
                 for (let i = 0; i < glut.foodAngles.length; i++) {
                     if (glut.foodAngles[i] !== undefined && glut.foodAngles[i].sz > 0) {
@@ -558,7 +561,9 @@ var glut = window.glut = (function(window) {
                     }
                 }
             }
+        },
 
+        drawBest: function() {
             if (tracer.check('glut', 0)) {
                 pencil.drawLine({
                         x: bot.xx,
@@ -569,6 +574,11 @@ var glut = window.glut = (function(window) {
                     },
                     'cyan');
             }
+        },
+
+        run: function() {
+            glut.drawAll();
+            glut.drawBest();
 
             if (glut.actionTimeout !== undefined) return;
             const delay = (1000 / bot.opt.targetFps) * glut.opt.frames;
