@@ -144,6 +144,20 @@ var zoom = window.zoom = (function(window) {
 // Draws shapes to the canvas.
 var pencil = window.pencil = (function(window) {
     return {
+        dark: {
+            red:    '#4D1F1F',            green:  '#174D26',
+            blue:   '#1B1F4D',            silver: '#404040',
+            orange: '#4D2F1F',            cyan:   '#174D4C',
+            purple: '#381B4D',            yellow: '#474D26'
+        },
+
+        light: {
+            red:    '#993D3D',            green:  '#2E994C',
+            blue:   '#363E99',            silver: '#8C8C8C',
+            orange: '#995D3D',            cyan:   '#2E9997',
+            purple: '#703699',            yellow: '#8D994B'
+        },
+
         // Draws a rectangle on the canvas.
         drawRect: function(rect, color, fill, alpha) {
             if (alpha === undefined) alpha = 1;

@@ -105,7 +105,6 @@ var head = window.head = (function(window) {
                 bot.injectDistance2(obs);
                 wuss.addCollisionAngle(obs);
                 wuss.collisionPoints.push(obs);
-
                 head.draw(obs);
 
                 obs = {
@@ -120,9 +119,7 @@ var head = window.head = (function(window) {
                 bot.injectDistance2(obs);
                 wuss.addCollisionAngle(obs);
                 wuss.collisionPoints.push(obs);
-
                 head.draw(obs);
-
                 part.scan(snake);
             }
         }
@@ -147,10 +144,12 @@ var part = window.part = (function(window) {
             return canvas.pointInRect({x: s.pts[pts].xx, y: s.pts[pts].yy}, sectorBox);
         },
 
-        draw: function(obs) {
-            if (obs.distance <= Math.pow(5 * bot.snakeRadius + obs.bubble, 2)) {
-                wuss.collisionPoints.push(obs);
+        isClose: function(obs) {
+            return obs.distance <= Math.pow(5 * bot.snakeRadius + obs.bubble, 2);
+        },
 
+        draw: function(obs) {
+            if (part.isClose(obs)) {
                 if (tracer.check('wuss', 1)) {
                     pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'red');
                 }
@@ -181,7 +180,9 @@ var part = window.part = (function(window) {
 
                 bot.injectDistance2(obs);
                 wuss.addCollisionAngle(obs);
-
+                if (part.isClose(obs)) {
+                    wuss.collisionPoints.push(obs);
+                }
                 part.draw(obs);
             }
         }
@@ -238,7 +239,6 @@ var wall = window.wall = (function(window) {
                 bot.injectDistance2(obs);
                 wuss.collisionPoints.push(obs);
                 wuss.addCollisionAngle(obs);
-
                 wall.draw(obs);
             }
         }
@@ -555,7 +555,7 @@ var glut = window.glut = (function(window) {
                                 x: fa.x,
                                 y: fa.y
                             },
-                            fa.safe ? 'DarkCyan' : 'red',
+                            fa.safe ? pencil.dark.cyan : pencil.light.red,
                             fa.safe ? 1 : 2
                         );
                     }
