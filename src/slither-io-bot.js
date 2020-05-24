@@ -75,7 +75,8 @@ var head = window.head = (function(window) {
 
         draw: function(obs) {
             if (tracer.check('wuss', 1)) {
-                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
+                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
+                pencil.light.yellow);
             }
         },
 
@@ -151,10 +152,12 @@ var part = window.part = (function(window) {
         draw: function(obs) {
             if (part.isClose(obs)) {
                 if (tracer.check('wuss', 1)) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'red');
+                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
+                    pencil.light.red);
                 }
             } else if (tracer.check('wuss', 2)) {
-                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'orange');
+                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
+                pencil.light.orange);
             }
         },
 
@@ -219,7 +222,8 @@ var wall = window.wall = (function(window) {
 
         draw: function(obs) {
             if (tracer.check('wuss', 1)) {
-                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
+                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble),
+                pencil.light.blue);
             }
         },
 
@@ -308,7 +312,7 @@ var wuss = window.wuss = (function(window) {
                         x: bot.xx + 1000 * Math.cos(ang),
                         y: bot.yy + 1000 * Math.sin(ang)
                     },
-                    'lime');
+                    pencil.light.green);
             }
         },
 
@@ -367,7 +371,7 @@ var wuss = window.wuss = (function(window) {
                                 x: wuss.collisionAngles[i].x,
                                 y: wuss.collisionAngles[i].y
                             },
-                            '#251d11'); // very dark (mostly black) orange
+                            pencil.dark.orange);
                     }
                 }
             }
@@ -572,7 +576,7 @@ var glut = window.glut = (function(window) {
                         x: glut.currentFood.x,
                         y: glut.currentFood.y
                     },
-                    'cyan');
+                    pencil.light.cyan);
             }
         },
 
@@ -678,14 +682,14 @@ var bot = window.bot = (function(window) {
             bot.snakeLength = bot.getSnakeLength();
 
             if (tracer.level > 0) {
-                // coral food collection sector
+                // food collection sector
                 pencil.drawAngle(window.snake.ehang - Math.PI / 4, window.snake.ehang + Math.PI / 4,
-                    bot.stdBubble, 'coral', false);
-                // dark red circles depict snake turn radius
-                pencil.drawCircle(bot.getHeadCircle(-1, 0, 1), 'darkred');
-                pencil.drawCircle(bot.getHeadCircle( 1, 0, 1), 'darkred');
-                pencil.drawCircle(bot.getHeadCircle(-1, 0, 3), 'darkred');
-                pencil.drawCircle(bot.getHeadCircle( 1, 0, 3), 'darkred');
+                    bot.stdBubble, pencil.light.silver, false);
+                // circles depict snake turn radius
+                pencil.drawCircle(bot.getHeadCircle(-1, 0, 1), pencil.dark.silver);
+                pencil.drawCircle(bot.getHeadCircle( 1, 0, 1), pencil.dark.silver);
+                pencil.drawCircle(bot.getHeadCircle(-1, 0, 3), pencil.light.purple);
+                pencil.drawCircle(bot.getHeadCircle( 1, 0, 3), pencil.light.purple);
             }
         },
 
