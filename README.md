@@ -43,8 +43,6 @@ Statistics, like the top ten scores this session, are displayed in a mid-left ov
 
 Visual debugging, like food collection sector, can be changed with **Y** and **6**.
 
-You can conserve resources (and therefore run more bots) by enabling "no graphics mode". This is toggled with **G**.
-
 Bot modules detect: 1. the outer wall, 2. actual and predicted enemy snake head positions, and 3. enemy body parts.
 
 Snake does a decent job eating on its own. This can be toggled with **T**.
@@ -75,7 +73,6 @@ T | Eat mode
 Y	| Visual debugging level
 U	| Log debugging
 O | Mobile rendering
-G | Disable graphics
 H | Hide overlays
 Z | Reset zoom
 B | Ball mode
