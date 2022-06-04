@@ -73,6 +73,12 @@ var head = window.head = (function(window) {
             mult: 10 / 4,
         },
 
+        draw: function(obs) {
+            if (tracer.check('wuss', 1)) {
+                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
+            }
+        },
+
         seeHeads: function() {
             var obs;
             for (let snake = 0, ls = window.snakes.length; snake < ls; snake++) {
@@ -100,9 +106,7 @@ var head = window.head = (function(window) {
                 wuss.addCollisionAngle(obs);
                 wuss.collisionPoints.push(obs);
 
-                if (tracer.check('wuss', 1)) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
-                }
+                head.draw(obs);
 
                 obs = {
                     xx: s.xx,
@@ -117,9 +121,7 @@ var head = window.head = (function(window) {
                 wuss.addCollisionAngle(obs);
                 wuss.collisionPoints.push(obs);
 
-                if (tracer.check('wuss', 1)) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
-                }
+                head.draw(obs);
 
                 part.seeParts(snake);
             }
@@ -145,6 +147,18 @@ var part = window.part = (function(window) {
             return canvas.pointInRect({x: s.pts[pts].xx, y: s.pts[pts].yy}, sectorBox);
         },
 
+        draw: function(obs) {
+            if (obs.distance <= Math.pow(5 * bot.snakeRadius + obs.bubble, 2)) {
+                wuss.collisionPoints.push(obs);
+
+                if (tracer.check('wuss', 1)) {
+                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'red');
+                }
+            } else if (tracer.check('wuss', 2)) {
+                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'orange');
+            }
+        },
+
         seeParts: function(snake) {
             const s = window.snakes[snake];
             const snakeRadius = bot.getSnakeWidth(s.sc) / 2;
@@ -168,15 +182,7 @@ var part = window.part = (function(window) {
                 bot.injectDistance2(obs);
                 wuss.addCollisionAngle(obs);
 
-                if (obs.distance <= Math.pow(5 * bot.snakeRadius + obs.bubble, 2)) {
-                    wuss.collisionPoints.push(obs);
-
-                    if (tracer.check('wuss', 1)) {
-                        pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'red');
-                    }
-                } else if (tracer.check('wuss', 2)) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'orange');
-                }
+                part.draw(obs);
             }
         }
     };
@@ -210,6 +216,12 @@ var wall = window.wall = (function(window) {
             return (dist > wall.MIN_D);
         },
 
+        draw: function(obs) {
+            if (tracer.check('wuss', 1)) {
+                pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
+            }
+        },
+
         seeWall: function() {
             if (!wall.isWallClose()) return;
             const midAng = canvas.fastAtan2(bot.yy - wall.MID_X, bot.xx - wall.MID_Y);
@@ -227,9 +239,7 @@ var wall = window.wall = (function(window) {
                 wuss.collisionPoints.push(obs);
                 wuss.addCollisionAngle(obs);
 
-                if (tracer.check('wuss', 1)) {
-                    pencil.drawCircle(shapes.circle(obs.xx, obs.yy, obs.bubble), 'yellow');
-                }
+                wall.draw(obs);
             }
         }
     };
@@ -289,6 +299,19 @@ var wuss = window.wuss = (function(window) {
             return (base + j) % max;
         },
 
+        drawBest: function(ang) {
+            if (tracer.check('wuss', 0)) {
+                pencil.drawLine({
+                        x: bot.xx,
+                        y: bot.yy
+                    }, {
+                        x: bot.xx + 1000 * Math.cos(ang),
+                        y: bot.yy + 1000 * Math.sin(ang)
+                    },
+                    'lime');
+            }
+        },
+
         // Finds the best (largest + closest) angle with no collision.
         bestUndefAngle: function() {
             var best = {
@@ -308,18 +331,7 @@ var wuss = window.wuss = (function(window) {
             }
             if (best.idx !== undefined) {
                 const ang = best.idx * bot.opt.arcSize;
-
-                if (tracer.check('wuss', 0)) {
-                    pencil.drawLine({
-                            x: bot.xx,
-                            y: bot.yy
-                        }, {
-                            x: bot.xx + 1000 * Math.cos(ang),
-                            y: bot.yy + 1000 * Math.sin(ang)
-                        },
-                        'lime');
-                }
-
+                wuss.drawBest(ang);
                 return ang;
             }
         },
